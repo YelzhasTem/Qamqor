@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --font-sans: var(--font-sans);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: #f7faf7;
+  --foreground: #102a1b;
+  --card: #ffffff;
+  --card-foreground: #102a1b;
+  --primary: #16a34a;
+  --primary-foreground: #ffffff;
+  --secondary: #eaf7ee;
+  --secondary-foreground: #126236;
+  --muted: #f0f4f1;
+  --muted-foreground: #647568;
+  --accent: #dcfce7;
+  --accent-foreground: #14532d;
+  --border: #dce7de;
+  --input: #dce7de;
+  --ring: #16a34a;
+  --destructive: #dc2626;
+  --radius: 0.9rem;
+  --font-sans: "Inter", "SF Pro Display", "SF Pro Text", ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: #bbf7d0;
+  color: #14532d;
+}
+
+.page-shell {
+  width: min(100% - 2rem, 76rem);
+  margin-inline: auto;
+}
+
+.hero-grid {
+  background-image:
+    radial-gradient(circle at 16% 18%, rgb(34 197 94 / 0.18), transparent 28%),
+    radial-gradient(circle at 86% 12%, rgb(22 163 74 / 0.12), transparent 24%),
+    linear-gradient(rgb(22 163 74 / 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(22 163 74 / 0.055) 1px, transparent 1px);
+  background-size: auto, auto, 36px 36px, 36px 36px;
+}
+
+.glass-card {
+  background: rgb(255 255 255 / 0.82);
+  box-shadow: 0 24px 80px rgb(20 83 45 / 0.1);
+  backdrop-filter: blur(18px);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}

@@ -1,2 +1,14 @@
 .vercel
 .env*
+!.env.example
+
+# dependencies and build output
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# local tooling
+.DS_Store
+npm-debug.log*
+tmp/
