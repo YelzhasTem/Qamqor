@@ -13,8 +13,10 @@ const statusLabels: Record<string, string> = {
 };
 
 export function StatusBadge({ status }: { status: string }) {
-  const variant = status === "approved" || status === "confirmed" || status === "published"
+  const variant = status === "approved" || status === "confirmed" || status === "completed"
     ? "success"
+    : status === "published" || status === "attended"
+      ? "info"
     : status === "rejected" || status === "cancelled"
       ? "danger"
       : status === "pending" || status === "draft"

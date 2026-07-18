@@ -13,8 +13,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const profile = await getCurrentProfile();
   if (!profile) redirect("/auth/login");
   return (
-    <div className="min-h-screen bg-[#f4f8f4]">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-68 border-r bg-white p-5 md:flex md:flex-col">
+    <div className="min-h-screen bg-background">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-68 border-r bg-surface p-5 md:flex md:flex-col">
         <Logo />
         <div className="mt-10"><DashboardNav role={profile.role} /></div>
         <div className="mt-auto border-t pt-5">
@@ -26,7 +26,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
       <div className="md:pl-68">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-white/90 px-4 backdrop-blur md:px-8">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-surface/90 px-4 backdrop-blur md:px-8">
           <MobileDashboardNav role={profile.role} />
           <div className="ml-auto flex items-center gap-3"><span className="hidden text-sm text-muted-foreground sm:block">{profile.city || "Город не указан"}</span><Avatar className="size-9"><AvatarImage src={profile.avatar_url ?? undefined} alt={profile.full_name} /><AvatarFallback>{initials(profile.full_name)}</AvatarFallback></Avatar></div>
         </header>

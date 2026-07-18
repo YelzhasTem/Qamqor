@@ -20,7 +20,21 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ru" suppressHydrationWarning>
       <body>
         {children}
-        <Toaster richColors position="top-right" closeButton />
+        <Toaster
+          richColors
+          position="top-right"
+          closeButton
+          toastOptions={{
+            classNames: {
+              toast: "border-border! bg-surface! text-foreground!",
+              success: "border-success/30! bg-success/10!",
+              warning: "border-warning/30! bg-warning/10!",
+              error: "border-danger/30! bg-danger/10!",
+              info: "border-info/30! bg-info/10!",
+              description: "text-muted-foreground!",
+            },
+          }}
+        />
       </body>
     </html>
   );

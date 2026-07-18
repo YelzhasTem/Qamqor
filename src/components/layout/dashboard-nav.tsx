@@ -23,6 +23,6 @@ export function DashboardNav({ role, onNavigate }: { role: "volunteer" | "coordi
   const links = role === "coordinator" ? coordinatorLinks : volunteerLinks;
   return <nav className="grid gap-1.5">{links.map(({ href, label, icon: Icon }) => {
     const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
-    return <Link key={href} href={href} onClick={onNavigate} className={cn("flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition", active ? "bg-green-600 text-white shadow-md shadow-green-600/15" : "text-muted-foreground hover:bg-green-50 hover:text-green-800")}><Icon className="size-4.5" />{label}</Link>;
+    return <Link key={href} href={href} onClick={onNavigate} className={cn("flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition", active ? "bg-primary text-primary-foreground shadow-md shadow-primary/15" : "text-muted-foreground hover:bg-primary/5 hover:text-foreground")}><Icon className="size-4.5" />{label}</Link>;
   })}</nav>;
 }

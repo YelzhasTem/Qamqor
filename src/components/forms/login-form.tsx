@@ -29,8 +29,8 @@ export function LoginForm({ next }: { next?: string }) {
     router.refresh();
   };
   return <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
-    <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...register("email")} /><p className="text-xs text-red-600">{errors.email?.message}</p></div>
-    <div className="grid gap-2"><div className="flex items-center justify-between"><Label htmlFor="password">Пароль</Label><Link href="/auth/forgot-password" className="text-xs font-semibold text-green-700 hover:underline">Забыли пароль?</Link></div><Input id="password" type="password" autoComplete="current-password" placeholder="••••••••" {...register("password")} /><p className="text-xs text-red-600">{errors.password?.message}</p></div>
+    <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...register("email")} /><p className="text-xs text-danger-foreground">{errors.email?.message}</p></div>
+    <div className="grid gap-2"><div className="flex items-center justify-between"><Label htmlFor="password">Пароль</Label><Link href="/auth/forgot-password" className="text-xs font-semibold text-primary hover:underline">Забыли пароль?</Link></div><Input id="password" type="password" autoComplete="current-password" placeholder="••••••••" {...register("password")} /><p className="text-xs text-danger-foreground">{errors.password?.message}</p></div>
     <FormMessage message={message} />
     <Button type="submit" size="lg" disabled={isSubmitting}>{isSubmitting ? <Loader2 className="animate-spin" /> : null}Войти</Button>
   </form>;
