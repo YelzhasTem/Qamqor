@@ -36,33 +36,33 @@
 }
 
 :root {
-  --primary: #2563eb;
+  --primary: #dc2626;
   --primary-foreground: #ffffff;
-  --secondary: #22c55e;
-  --secondary-foreground: #1e293b;
-  --accent: #f59e0b;
-  --accent-foreground: #1e293b;
-  --background: #f8fafc;
+  --secondary: #ef4444;
+  --secondary-foreground: #1f2937;
+  --accent: #f87171;
+  --accent-foreground: #1f2937;
+  --background: #fafafa;
   --surface: #ffffff;
-  --foreground: #1e293b;
-  --text: #1e293b;
-  --text-secondary: #64748b;
+  --foreground: #1f2937;
+  --text: #1f2937;
+  --text-secondary: #1f2937;
   --card: #ffffff;
-  --card-foreground: #1e293b;
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #2563eb;
-  --success: #22c55e;
-  --success-foreground: #1e293b;
-  --warning: #f59e0b;
-  --warning-foreground: #1e293b;
-  --danger: #ef4444;
-  --danger-foreground: #1e293b;
-  --info: #2563eb;
+  --card-foreground: #1f2937;
+  --muted: #fafafa;
+  --muted-foreground: #1f2937;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #dc2626;
+  --success: #ef4444;
+  --success-foreground: #1f2937;
+  --warning: #f87171;
+  --warning-foreground: #1f2937;
+  --danger: #dc2626;
+  --danger-foreground: #1f2937;
+  --info: #dc2626;
   --info-foreground: #ffffff;
-  --destructive: #ef4444;
+  --destructive: #dc2626;
   --radius: 0.9rem;
   --font-sans: "Inter", "SF Pro Display", "SF Pro Text", ui-sans-serif, system-ui, sans-serif;
 }

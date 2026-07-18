@@ -4,14 +4,14 @@ import fontkit from "@pdf-lib/fontkit";
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 
 const certificateColors = {
-  primary: pdfColor("#2563EB"),
-  secondary: pdfColor("#22C55E"),
-  accent: pdfColor("#F59E0B"),
-  background: pdfColor("#F8FAFC"),
+  primary: pdfColor("#DC2626"),
+  secondary: pdfColor("#EF4444"),
+  accent: pdfColor("#F87171"),
+  background: pdfColor("#FAFAFA"),
   surface: pdfColor("#FFFFFF"),
-  text: pdfColor("#1E293B"),
-  muted: pdfColor("#64748B"),
-  border: pdfColor("#E2E8F0"),
+  text: pdfColor("#1F2937"),
+  muted: pdfColor("#1F2937"),
+  border: pdfColor("#E5E7EB"),
 };
 
 export type CertificateData = {
