@@ -24,7 +24,6 @@ export function DashboardProjectFeed({ projects }: { projects: ProjectWithMeta[]
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="secondary">{project.category}</Badge>
                 <Badge variant="outline">{project.format === "online" ? "Онлайн" : "Офлайн"}</Badge>
-                {new Date(project.end_date) < new Date() ? <Badge variant="muted">Прошедший</Badge> : null}
               </div>
 
               <h2 className="mt-4 text-2xl font-black tracking-tight">
