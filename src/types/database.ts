@@ -570,6 +570,26 @@ export type Database = {
       }
     }
     Functions: {
+      admin_list_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avatar_url: string | null
+          city: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+        }[]
+      }
+      admin_set_user_role: {
+        Args: {
+          new_role: Database["public"]["Enums"]["user_role"]
+          target_user_id: string
+        }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      is_admin: { Args: { user_id?: string }; Returns: boolean }
       is_coordinator: { Args: { user_id?: string }; Returns: boolean }
       owns_project: {
         Args: { target_project_id: string; user_id?: string }
@@ -590,7 +610,7 @@ export type Database = {
       hour_status: "pending" | "confirmed" | "rejected"
       project_format: "online" | "offline"
       project_status: "draft" | "published" | "completed" | "cancelled"
-      user_role: "volunteer" | "coordinator"
+      user_role: "volunteer" | "coordinator" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -731,7 +751,7 @@ export const Constants = {
       hour_status: ["pending", "confirmed", "rejected"],
       project_format: ["online", "offline"],
       project_status: ["draft", "published", "completed", "cancelled"],
-      user_role: ["volunteer", "coordinator"],
+      user_role: ["volunteer", "coordinator", "admin"],
     },
   },
 } as const

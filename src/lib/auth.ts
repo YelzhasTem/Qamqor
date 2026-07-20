@@ -3,6 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { isCoordinatorRole, type UserRole } from "@/types/roles";
 
 export const getCurrentUser = cache(async () => {
   const supabase = await createClient();
@@ -24,9 +25,10 @@ export async function requireUser() {
   return user;
 }
 
-export async function requireRole(role: "volunteer" | "coordinator") {
+export async function requireRole(role: UserRole) {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/auth/login");
-  if (profile.role !== role) redirect("/dashboard");
+  const hasRole = role === "coordinator" ? isCoordinatorRole(profile.role) : profile.role === role;
+  if (!hasRole) redirect("/dashboard");
   return profile;
 }

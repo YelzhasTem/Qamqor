@@ -1,6 +1,6 @@
 # Qamqor
 
-Qamqor is a volunteer management platform that brings volunteers and project coordinators into one workspace. Volunteers can discover initiatives, apply, track participation, collect confirmed hours, earn achievements and download certificates. Coordinators can publish projects, review applicants and confirm participation and hours.
+Qamqor is a volunteer management platform that brings volunteers, project coordinators and administrators into one workspace. Volunteers can discover initiatives, apply, track participation, collect confirmed hours, earn achievements and download certificates. Coordinators manage assigned projects, review applicants and confirm participation and hours. Administrators manage user roles and inherit coordinator access.
 
 ## Stack
 
@@ -26,15 +26,24 @@ Qamqor is a volunteer management platform that brings volunteers and project coo
 
 ### Coordinators
 
-- Project CRUD, drafts, publishing and completion
+- Management of assigned existing projects
 - Cover image upload
 - Applicant review, approval, rejection and attendance marking
 - Actual-hours confirmation
 - Project and applicant statistics
 
+### Administrators
+
+- Private user and role management at `/admin/users`
+- Promotion of volunteers to coordinators and coordinator-role removal
+- Automatic inheritance of all coordinator permissions
+- Administrator roles cannot be selected at registration or granted through the role manager
+
 ### Security and data
 
 - RLS policies enforce role and ownership rules in PostgreSQL
+- Public registration always creates a volunteer profile
+- Only administrators can assign or remove coordinator access
 - Private profile fields are never exposed by public views
 - Profile rows are created automatically after Supabase signup
 - Confirmed hours automatically award achievements and issue certificates
