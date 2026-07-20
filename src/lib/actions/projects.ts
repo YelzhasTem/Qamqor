@@ -17,8 +17,12 @@ async function uploadCover(file: File, userId: string) {
   return supabase.storage.from("project-covers").getPublicUrl(path).data.publicUrl;
 }
 
-export async function saveProjectAction(projectId: string | null, formData: FormData): Promise<ActionResult<{ id: string }>> {
+export async function saveProjectAction(projectId: string, formData: FormData): Promise<ActionResult<{ id: string }>> {
   const profile = await requireRole("coordinator");
+  const supabase = await createClient();
+  const { data: existingProject } = await supabase.from("projects").select("id").eq("id", projectId).eq("coordinator_id", profile.id).maybeSingle();
+  if (!existingProject) return { success: false, error: "Проект не найден" };
+
   const raw = Object.fromEntries(formData.entries());
   const parsed = projectSchema.safeParse(raw);
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Проверьте данные проекта" };
@@ -40,16 +44,12 @@ export async function saveProjectAction(projectId: string | null, formData: Form
     start_date: new Date(parsed.data.start_date).toISOString(),
     end_date: new Date(parsed.data.end_date).toISOString(),
   };
-  const supabase = await createClient();
-  const query = projectId
-    ? supabase.from("projects").update(payload).eq("id", projectId).eq("coordinator_id", profile.id).select("id").single()
-    : supabase.from("projects").insert(payload).select("id").single();
-  const { data, error } = await query;
+  const { data, error } = await supabase.from("projects").update(payload).eq("id", projectId).eq("coordinator_id", profile.id).select("id").single();
   if (error) return { success: false, error: error.message };
   revalidatePath("/projects");
   revalidatePath("/coordinator/projects");
   revalidatePath("/dashboard");
-  if (projectId) revalidatePath(`/projects/${projectId}`);
+  revalidatePath(`/projects/${projectId}`);
   return { success: true, data: { id: data.id } };
 }
 

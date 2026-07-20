@@ -58,7 +58,6 @@ export function LandingPage({ stats, projects }: LandingPageProps) {
             <p className="mt-7 max-w-xl text-balance text-lg leading-8 text-muted-foreground sm:text-xl">{copy.hero.description}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="rounded-full px-7 shadow-lg shadow-primary/20"><Link href="/auth/register">{copy.hero.volunteer}<ArrowRight /></Link></Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full px-7"><Link href="/auth/register?role=coordinator">{copy.hero.coordinator}</Link></Button>
             </div>
             <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-sm font-bold text-muted-foreground">
               {copy.hero.trust.map((item) => <span key={item} className="flex items-center gap-2"><span className="flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary"><Check className="size-3" /></span>{item}</span>)}
@@ -204,7 +203,7 @@ export function LandingPage({ stats, projects }: LandingPageProps) {
                 <SectionEyebrow>{copy.cta.eyebrow}</SectionEyebrow>
                 <h2 className="marketing-heading mt-5 text-balance text-4xl tracking-[-0.045em] sm:text-6xl">{copy.cta.title}</h2>
                 <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{copy.cta.description}</p>
-                <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><Button asChild size="lg" className="rounded-full px-7"><Link href="/auth/register">{copy.cta.volunteer}<ArrowRight /></Link></Button><Button asChild size="lg" variant="outline" className="rounded-full px-7"><Link href="/auth/register?role=coordinator">{copy.cta.coordinator}</Link></Button></div>
+                <div className="mt-8 flex justify-center"><Button asChild size="lg" className="rounded-full px-7"><Link href="/auth/register">{copy.cta.volunteer}<ArrowRight /></Link></Button></div>
               </div>
             </div>
           </Reveal>

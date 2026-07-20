@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, FolderKanban, Gauge, LayoutList, UserRound, UsersRound } from "lucide-react";
+import { Award, FolderKanban, Gauge, LayoutList, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const volunteerLinks = [
@@ -14,7 +14,6 @@ const volunteerLinks = [
 const coordinatorLinks = [
   { href: "/dashboard", label: "Обзор", icon: Gauge },
   { href: "/coordinator/projects", label: "Мои проекты", icon: FolderKanban },
-  { href: "/coordinator/projects/new", label: "Создать проект", icon: UsersRound },
   { href: "/profile", label: "Профиль", icon: UserRound },
 ];
 

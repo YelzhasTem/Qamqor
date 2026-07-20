@@ -10,7 +10,7 @@ export const registerSchema = z.object({
   city: z.string().trim().min(2, "Укажите город").max(100),
   email: z.email("Введите корректный email"),
   password: z.string().min(8, "Минимум 8 символов").max(72),
-  role: z.enum(["volunteer", "coordinator"]),
+  role: z.literal("volunteer"),
 });
 
 export const forgotPasswordSchema = z.object({ email: z.email("Введите корректный email") });
