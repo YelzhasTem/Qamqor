@@ -40,8 +40,7 @@ export async function getDashboardProjects(limit = 100) {
     .from("projects")
     .select("*")
     .eq("status", "published")
-    .gte("end_date", new Date().toISOString())
-    .order("start_date", { ascending: true })
+    .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
   return enrichProjects(data ?? []);

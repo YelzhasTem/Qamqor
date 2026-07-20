@@ -44,7 +44,7 @@ export const projectSchema = z.object({
   title: z.string().trim().min(3, "Минимум 3 символа").max(160),
   description: z.string().trim().min(20, "Расскажите о проекте подробнее").max(6000),
   category: z.string().trim().min(2, "Выберите категорию").max(80),
-  city: z.string().trim().min(2, "Укажите город").max(100),
+  city: z.enum(registrationCities, { error: "Выберите город" }),
   address: z.string().trim().max(300).optional().or(z.literal("")),
   format: z.enum(["online", "offline"]),
   start_date: z.string().min(1, "Укажите дату начала"),
