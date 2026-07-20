@@ -1,6 +1,6 @@
 # Qamqor
 
-Qamqor is a volunteer management platform that brings volunteers, project coordinators and administrators into one workspace. Volunteers can discover initiatives, apply, track participation, collect confirmed hours, earn achievements and download certificates. Coordinators manage assigned projects, review applicants and confirm participation and hours. Administrators manage user roles and inherit coordinator access.
+Qamqor is a volunteer management platform that brings volunteers, project coordinators and administrators into one workspace. Guests see the public landing page, while signed-in users open a shared project dashboard. Volunteers can discover initiatives, apply, track participation, collect confirmed hours, earn achievements and download certificates. Coordinators create and manage their own projects, review applicants and confirm participation and hours. Administrators manage user roles and inherit coordinator access.
 
 ## Stack
 
@@ -26,8 +26,9 @@ Qamqor is a volunteer management platform that brings volunteers, project coordi
 
 ### Coordinators
 
-- Management of assigned existing projects
-- Cover image upload
+- Project creation, publishing, editing and deletion
+- Optional cover upload with a reusable Qamqor fallback illustration
+- Fixed project-benefit options: letters, volunteer hours, meals, transport and merch
 - Applicant review, approval, rejection and attendance marking
 - Actual-hours confirmation
 - Project and applicant statistics
@@ -48,6 +49,13 @@ Qamqor is a volunteer management platform that brings volunteers, project coordi
 - Profile rows are created automatically after Supabase signup
 - Confirmed hours automatically award achievements and issue certificates
 - Storage policies isolate avatar and project-cover uploads by owner
+
+### Navigation
+
+- `/` shows the landing page to guests and redirects signed-in users to `/dashboard`
+- `/dashboard` is a shared scrollable feed of published projects for every role
+- `/cabinet` contains the role-specific personal statistics that previously lived on the dashboard
+- `/coordinator/projects/new` is available only to coordinators and administrators
 
 ## Local setup
 

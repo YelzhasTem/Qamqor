@@ -17,20 +17,67 @@ async function uploadCover(file: File, userId: string) {
   return supabase.storage.from("project-covers").getPublicUrl(path).data.publicUrl;
 }
 
+function projectFormValues(formData: FormData) {
+  const raw = Object.fromEntries(formData.entries());
+  let benefits: unknown = [];
+  try {
+    benefits = JSON.parse(String(formData.get("benefits") ?? "[]"));
+  } catch {
+    benefits = [];
+  }
+  return { ...raw, benefits };
+}
+
+async function projectCoverFromForm(formData: FormData, userId: string, existingCover: string | null = null) {
+  const cover = formData.get("cover");
+  if (cover instanceof File && cover.size > 0) return uploadCover(cover, userId);
+  return existingCover;
+}
+
+export async function createProjectAction(formData: FormData): Promise<ActionResult<{ id: string }>> {
+  const profile = await requireRole("coordinator");
+  const parsed = projectSchema.safeParse(projectFormValues(formData));
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Проверьте данные проекта" };
+
+  let coverUrl: string | null = null;
+  try {
+    coverUrl = await projectCoverFromForm(formData, profile.id);
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Не удалось загрузить изображение" };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("projects").insert({
+    ...parsed.data,
+    address: parsed.data.address || null,
+    requirements: parsed.data.requirements || null,
+    cover_url: coverUrl,
+    coordinator_id: profile.id,
+    start_date: new Date(parsed.data.start_date).toISOString(),
+    end_date: new Date(parsed.data.end_date).toISOString(),
+  }).select("id").single();
+
+  if (error) return { success: false, error: error.message };
+  revalidatePath("/");
+  revalidatePath("/projects");
+  revalidatePath("/coordinator/projects");
+  revalidatePath("/dashboard");
+  revalidatePath("/cabinet");
+  return { success: true, data: { id: data.id } };
+}
+
 export async function saveProjectAction(projectId: string, formData: FormData): Promise<ActionResult<{ id: string }>> {
   const profile = await requireRole("coordinator");
   const supabase = await createClient();
   const { data: existingProject } = await supabase.from("projects").select("id").eq("id", projectId).eq("coordinator_id", profile.id).maybeSingle();
   if (!existingProject) return { success: false, error: "Проект не найден" };
 
-  const raw = Object.fromEntries(formData.entries());
-  const parsed = projectSchema.safeParse(raw);
+  const parsed = projectSchema.safeParse(projectFormValues(formData));
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Проверьте данные проекта" };
 
-  const cover = formData.get("cover");
   let coverUrl = typeof formData.get("existing_cover_url") === "string" ? String(formData.get("existing_cover_url")) || null : null;
   try {
-    if (cover instanceof File && cover.size > 0) coverUrl = await uploadCover(cover, profile.id);
+    coverUrl = await projectCoverFromForm(formData, profile.id, coverUrl);
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : "Не удалось загрузить изображение" };
   }
@@ -49,6 +96,7 @@ export async function saveProjectAction(projectId: string, formData: FormData): 
   revalidatePath("/projects");
   revalidatePath("/coordinator/projects");
   revalidatePath("/dashboard");
+  revalidatePath("/cabinet");
   revalidatePath(`/projects/${projectId}`);
   return { success: true, data: { id: data.id } };
 }
@@ -61,6 +109,7 @@ export async function deleteProjectAction(projectId: string): Promise<ActionResu
   revalidatePath("/projects");
   revalidatePath("/coordinator/projects");
   revalidatePath("/dashboard");
+  revalidatePath("/cabinet");
   return { success: true };
 }
 
@@ -76,5 +125,6 @@ export async function setProjectStatusAction(projectId: string, status: "draft" 
   revalidatePath(`/projects/${projectId}`);
   revalidatePath("/coordinator/projects");
   revalidatePath("/dashboard");
+  revalidatePath("/cabinet");
   return { success: true };
 }

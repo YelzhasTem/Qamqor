@@ -242,6 +242,7 @@ export type Database = {
       projects: {
         Row: {
           address: string | null
+          benefits: string[]
           category: string
           city: string
           coordinator_id: string
@@ -261,6 +262,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          benefits?: string[]
           category: string
           city: string
           coordinator_id: string
@@ -280,6 +282,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          benefits?: string[]
           category?: string
           city?: string
           coordinator_id?: string

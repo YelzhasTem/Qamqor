@@ -34,6 +34,19 @@ export async function getPopularProjects(limit = 3) {
   return enrichProjects(data ?? []);
 }
 
+export async function getDashboardProjects(limit = 100) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("status", "published")
+    .gte("end_date", new Date().toISOString())
+    .order("start_date", { ascending: true })
+    .limit(limit);
+  if (error) throw error;
+  return enrichProjects(data ?? []);
+}
+
 export type ProjectFilters = { q?: string; city?: string; category?: string; format?: string; sort?: string; page?: number };
 export async function getProjectCatalog(filters: ProjectFilters, pageSize = 9) {
   const supabase = await createClient();

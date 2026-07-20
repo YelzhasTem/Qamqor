@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Clock3,
   FileCheck2,
+  FolderKanban,
   HeartHandshake,
   Leaf,
   MapPin,
@@ -216,32 +217,42 @@ export function LandingPage({ stats, projects }: LandingPageProps) {
 function LandingProjectCards({ projects }: { projects: ProjectWithMeta[] }) {
   const { locale, copy } = useLanguage();
   const dateLocale = locale === "kk" ? "kk-KZ" : locale === "en" ? "en-US" : "ru-RU";
-  const cards = projects.length
-    ? projects.slice(0, 3).map((project) => ({
-        id: project.id,
-        title: project.title,
-        description: project.description,
-        category: project.category,
-        city: project.city,
-        date: new Intl.DateTimeFormat(dateLocale, { day: "numeric", month: "long" }).format(new Date(project.start_date)),
-        hours: project.volunteer_hours,
-        places: project.availablePlaces ?? project.required_volunteers,
-        format: project.format,
-        cover: project.cover_url,
-        href: `/projects/${project.id}`,
-        demoIndex: -1,
-      }))
-    : copy.projects.demo.map((project, index) => ({ ...project, id: `demo-${index}`, cover: null, href: "/projects", demoIndex: index }));
+  if (!projects.length) {
+    return (
+      <Reveal className="md:col-span-2 lg:col-span-3">
+        <div className="flex min-h-64 flex-col items-center justify-center rounded-[2rem] border bg-surface px-6 text-center shadow-sm">
+          <span className="flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary"><FolderKanban className="size-7" /></span>
+          <h3 className="marketing-heading mt-5 text-2xl tracking-tight">{copy.projects.emptyTitle}</h3>
+          <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">{copy.projects.emptyDescription}</p>
+        </div>
+      </Reveal>
+    );
+  }
+
+  const cards = projects.slice(0, 3).map((project) => ({
+    id: project.id,
+    title: project.title,
+    description: project.description,
+    category: project.category,
+    city: project.city,
+    date: new Intl.DateTimeFormat(dateLocale, { day: "numeric", month: "long" }).format(new Date(project.start_date)),
+    hours: project.volunteer_hours,
+    showsHours: project.benefits.includes("volunteer_hours"),
+    places: project.availablePlaces ?? project.required_volunteers,
+    format: project.format,
+    cover: project.cover_url,
+    href: `/projects/${project.id}`,
+  }));
 
   return cards.map((project, index) => (
     <Reveal key={project.id} delay={index * 90}>
       <article className="landing-project-card group">
-        {project.demoIndex >= 0 ? <div className={`demo-project-cover demo-project-cover-${project.demoIndex}`} role="img" aria-label={project.title} /> : <ProjectCover src={project.cover} title={project.title} className="aspect-[4/3]" />}
+        <ProjectCover src={project.cover} title={project.title} className="aspect-[4/3]" />
         <div className="p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3"><Badge variant="secondary" className="rounded-full">{project.category}</Badge><span className="text-xs font-bold text-muted-foreground">{project.format === "online" ? copy.projects.online : copy.projects.offline}</span></div>
           <h3 className="marketing-heading mt-4 text-xl leading-7 tracking-tight"><Link href={project.href} className="transition hover:text-primary">{project.title}</Link></h3>
           <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{project.description}</p>
-          <div className="mt-5 grid grid-cols-2 gap-3 text-xs font-bold text-muted-foreground"><span className="flex items-center gap-1.5"><CalendarDays className="size-4 text-primary" />{project.date}</span><span className="flex items-center gap-1.5"><MapPin className="size-4 text-primary" />{project.city}</span><span className="flex items-center gap-1.5"><Clock3 className="size-4 text-primary" />{project.hours} {copy.projects.hours}</span><span className="flex items-center gap-1.5"><UsersRound className="size-4 text-primary" />{project.places} {copy.projects.places}</span></div>
+          <div className="mt-5 grid grid-cols-2 gap-3 text-xs font-bold text-muted-foreground"><span className="flex items-center gap-1.5"><CalendarDays className="size-4 text-primary" />{project.date}</span><span className="flex items-center gap-1.5"><MapPin className="size-4 text-primary" />{project.city}</span>{project.showsHours ? <span className="flex items-center gap-1.5"><Clock3 className="size-4 text-primary" />{project.hours} {copy.projects.hours}</span> : null}<span className="flex items-center gap-1.5"><UsersRound className="size-4 text-primary" />{project.places} {copy.projects.places}</span></div>
           <Link href={project.href} className="mt-5 flex items-center justify-between border-t pt-4 text-sm font-black text-foreground transition hover:text-primary"><span>{copy.projects.details}</span><span className="flex size-8 items-center justify-center rounded-full bg-primary/8 text-primary transition group-hover:translate-x-1"><ArrowRight className="size-4" /></span></Link>
         </div>
       </article>
