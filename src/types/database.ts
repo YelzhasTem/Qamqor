@@ -239,6 +239,35 @@ export type Database = {
           },
         ]
       }
+      project_whatsapp_groups: {
+        Row: {
+          created_at: string
+          project_id: string
+          updated_at: string
+          whatsapp_group_url: string
+        }
+        Insert: {
+          created_at?: string
+          project_id: string
+          updated_at?: string
+          whatsapp_group_url: string
+        }
+        Update: {
+          created_at?: string
+          project_id?: string
+          updated_at?: string
+          whatsapp_group_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_whatsapp_groups_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           address: string | null
@@ -594,6 +623,10 @@ export type Database = {
       }
       is_admin: { Args: { user_id?: string }; Returns: boolean }
       is_coordinator: { Args: { user_id?: string }; Returns: boolean }
+      has_current_project_application: {
+        Args: { target_project_id: string }
+        Returns: boolean
+      }
       owns_project: {
         Args: { target_project_id: string; user_id?: string }
         Returns: boolean

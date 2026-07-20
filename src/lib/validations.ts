@@ -52,6 +52,14 @@ export const projectSchema = z.object({
   volunteer_hours: z.coerce.number().min(0).max(1000),
   required_volunteers: z.coerce.number().int().min(1).max(100000),
   benefits: z.array(z.enum(projectBenefitValues)).min(1, "Выберите хотя бы один пункт"),
+  whatsapp_group_url: z.string().trim().url("Введите корректную ссылку").refine((value) => {
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" && url.hostname === "chat.whatsapp.com" && url.pathname.length > 1;
+    } catch {
+      return false;
+    }
+  }, "Используйте ссылку-приглашение вида https://chat.whatsapp.com/..."),
   requirements: z.string().trim().max(2000).optional().or(z.literal("")),
   status: z.enum(["draft", "published"]),
 }).superRefine((data, ctx) => {

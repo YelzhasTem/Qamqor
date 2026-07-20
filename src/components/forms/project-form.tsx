@@ -12,6 +12,7 @@ import {
   HandHeart,
   ImagePlus,
   Loader2,
+  MessageCircle,
   Save,
   Shirt,
   Utensils,
@@ -69,7 +70,7 @@ function toProjectCity(value?: string | null) {
   return undefined;
 }
 
-export function ProjectForm({ project, defaultCity = "" }: { project?: Project; defaultCity?: string }) {
+export function ProjectForm({ project, defaultCity = "", whatsappGroupUrl = "" }: { project?: Project; defaultCity?: string; whatsappGroupUrl?: string }) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState(project?.cover_url || DEFAULT_PROJECT_COVER);
@@ -94,6 +95,7 @@ export function ProjectForm({ project, defaultCity = "" }: { project?: Project; 
       volunteer_hours: project?.volunteer_hours ?? 4,
       required_volunteers: project?.required_volunteers ?? 10,
       benefits: existingBenefits,
+      whatsapp_group_url: whatsappGroupUrl,
       requirements: project?.requirements ?? "",
       status: project?.status === "published" ? "published" : "draft",
     },
@@ -222,6 +224,17 @@ export function ProjectForm({ project, defaultCity = "" }: { project?: Project; 
             <Input type="number" min={0.5} step="0.5" {...register("volunteer_hours")} />
           </Field>
         ) : null}
+      </CardSection>
+
+      <CardSection title="Группа участников">
+        <div className="flex items-start gap-3 rounded-2xl bg-success/10 p-4 text-sm leading-6 text-success-foreground">
+          <MessageCircle className="mt-0.5 size-5 shrink-0" />
+          <p>После подачи заявки волонтёр увидит эту ссылку и сможет вступить в группу проекта.</p>
+        </div>
+        <Field label="Ссылка на группу WhatsApp" error={errors.whatsapp_group_url?.message}>
+          <Input type="url" {...register("whatsapp_group_url")} placeholder="https://chat.whatsapp.com/..." autoComplete="off" />
+        </Field>
+        <p className="text-xs leading-5 text-muted-foreground">Ссылка обязательна и не показывается незарегистрированным посетителям.</p>
       </CardSection>
 
       <CardSection title="Участие и публикация">
