@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const registrationCities = ["Алматы", "Астана", "Шымкент"] as const;
+
 export const loginSchema = z.object({
   email: z.email("Введите корректный email"),
   password: z.string().min(6, "Минимум 6 символов"),
@@ -7,7 +9,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = z.object({
   fullName: z.string().trim().min(2, "Укажите имя").max(120),
-  city: z.string().trim().min(2, "Укажите город").max(100),
+  city: z.enum(registrationCities, { error: "Выберите город" }),
   email: z.email("Введите корректный email"),
   password: z.string().min(8, "Минимум 8 символов").max(72),
   role: z.literal("volunteer"),
