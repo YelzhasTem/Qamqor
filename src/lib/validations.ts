@@ -2,6 +2,16 @@ import { z } from "zod";
 
 export const registrationCities = ["Алматы", "Астана", "Шымкент"] as const;
 
+export function normalizeKazakhstanPhone(value: string) {
+  return `+${value.replace(/\D/g, "")}`;
+}
+
+const kazakhstanPhoneSchema = z.string()
+  .trim()
+  .min(1, "Укажите номер телефона")
+  .max(32)
+  .refine((value) => /^\+7[\d\s()-]*$/.test(value) && value.replace(/\D/g, "").length === 11, "Введите номер в формате +7 700 123 45 67");
+
 export const loginSchema = z.object({
   email: z.email("Введите корректный email"),
   password: z.string().min(6, "Минимум 6 символов"),
@@ -10,6 +20,7 @@ export const loginSchema = z.object({
 export const registerSchema = z.object({
   fullName: z.string().trim().min(2, "Укажите имя").max(120),
   city: z.enum(registrationCities, { error: "Выберите город" }),
+  phone: kazakhstanPhoneSchema,
   email: z.email("Введите корректный email"),
   password: z.string().min(8, "Минимум 8 символов").max(72),
   role: z.literal("volunteer"),
