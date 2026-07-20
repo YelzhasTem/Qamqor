@@ -61,11 +61,8 @@ export const marketingCopy = {
       hours: "часа",
       online: "Онлайн",
       offline: "Офлайн",
-      demo: [
-        { title: "Чистые берега Алматы", description: "Вместе очистим берег реки и подготовим территорию для семейного отдыха.", category: "Экология", city: "Алматы", date: "24 августа", hours: 4, places: 18, format: "offline" },
-        { title: "Тёплые лапы", description: "Поможем приюту с прогулками, кормлением животных и уютом в вольерах.", category: "Животные", city: "Астана", date: "31 августа", hours: 5, places: 12, format: "offline" },
-        { title: "Цифровой наставник", description: "Научим старшее поколение уверенно пользоваться смартфоном и онлайн-сервисами.", category: "Образование", city: "Весь Казахстан", date: "7 сентября", hours: 3, places: 25, format: "online" },
-      ],
+      emptyTitle: "Проекты скоро появятся",
+      emptyDescription: "Координаторы готовят первые инициативы. После публикации они появятся здесь автоматически.",
     },
     impact: {
       eyebrow: "Ваш вклад остаётся с вами",
@@ -149,11 +146,8 @@ export const marketingCopy = {
       hours: "сағат",
       online: "Онлайн",
       offline: "Офлайн",
-      demo: [
-        { title: "Алматының таза жағалауы", description: "Өзен жағасын бірге тазалап, аумақты отбасылық демалысқа дайындаймыз.", category: "Экология", city: "Алматы", date: "24 тамыз", hours: 4, places: 18, format: "offline" },
-        { title: "Жылы табандар", description: "Панадағы жануарларды серуендетуге, тамақтандыруға және күтім жасауға көмектесеміз.", category: "Жануарлар", city: "Астана", date: "31 тамыз", hours: 5, places: 12, format: "offline" },
-        { title: "Цифрлық тәлімгер", description: "Егде жастағы адамдарға смартфон мен онлайн қызметтерді қолдануды үйретеміз.", category: "Білім", city: "Бүкіл Қазақстан", date: "7 қыркүйек", hours: 3, places: 25, format: "online" },
-      ],
+      emptyTitle: "Жобалар жақында пайда болады",
+      emptyDescription: "Үйлестірушілер алғашқы бастамаларды дайындап жатыр. Жарияланғаннан кейін олар мұнда автоматты түрде шығады.",
     },
     impact: {
       eyebrow: "Сіздің үлесіңіз өзіңізбен қалады",
@@ -237,11 +231,8 @@ export const marketingCopy = {
       hours: "hours",
       online: "Online",
       offline: "In person",
-      demo: [
-        { title: "Clean shores of Almaty", description: "Let’s clean the riverbank together and make it welcoming for local families.", category: "Environment", city: "Almaty", date: "August 24", hours: 4, places: 18, format: "offline" },
-        { title: "Warm paws", description: "Help a shelter with walks, feeding and creating comfortable spaces for animals.", category: "Animals", city: "Astana", date: "August 31", hours: 5, places: 12, format: "offline" },
-        { title: "Digital mentor", description: "Help older adults feel confident using smartphones and essential online services.", category: "Education", city: "Across Kazakhstan", date: "September 7", hours: 3, places: 25, format: "online" },
-      ],
+      emptyTitle: "Projects are coming soon",
+      emptyDescription: "Coordinators are preparing the first initiatives. Published projects will appear here automatically.",
     },
     impact: {
       eyebrow: "Your impact stays with you",

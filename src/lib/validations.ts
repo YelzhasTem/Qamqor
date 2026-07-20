@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { projectBenefitValues } from "@/lib/project-benefits";
 
 export const registrationCities = ["Алматы", "Астана", "Шымкент"] as const;
 
@@ -50,11 +51,13 @@ export const projectSchema = z.object({
   end_date: z.string().min(1, "Укажите дату окончания"),
   volunteer_hours: z.coerce.number().min(0).max(1000),
   required_volunteers: z.coerce.number().int().min(1).max(100000),
+  benefits: z.array(z.enum(projectBenefitValues)).min(1, "Выберите хотя бы один пункт"),
   requirements: z.string().trim().max(2000).optional().or(z.literal("")),
   status: z.enum(["draft", "published"]),
 }).superRefine((data, ctx) => {
   if (new Date(data.end_date) < new Date(data.start_date)) ctx.addIssue({ code: "custom", message: "Дата окончания должна быть позже даты начала", path: ["end_date"] });
   if (data.format === "offline" && !data.address) ctx.addIssue({ code: "custom", message: "Укажите адрес", path: ["address"] });
+  if (data.benefits.includes("volunteer_hours") && data.volunteer_hours <= 0) ctx.addIssue({ code: "custom", message: "Укажите количество волонтёрских часов", path: ["volunteer_hours"] });
 });
 
 export const hoursSchema = z.object({

@@ -24,12 +24,15 @@ try {
   assert.ifError(coordinatorCreateError);
   coordinatorId = coordinatorUser.user.id;
 
+  const { error: coordinatorRoleError } = await admin.from("profiles").update({ role: "coordinator" }).eq("id", coordinatorId);
+  assert.ifError(coordinatorRoleError);
+
   const { error: volunteerLoginError } = await volunteer.auth.signInWithPassword({ email: `volunteer-${suffix}@example.com`, password });
   const { error: coordinatorLoginError } = await coordinator.auth.signInWithPassword({ email: `coordinator-${suffix}@example.com`, password });
   assert.ifError(volunteerLoginError);
   assert.ifError(coordinatorLoginError);
 
-  const { data: project, error: projectError } = await coordinator.from("projects").insert({ coordinator_id: coordinatorId, title: "Qamqor smoke test project", description: "Временный проект для проверки полного рабочего цикла платформы Qamqor.", category: "Экология", city: "Алматы", address: "Тестовый адрес", format: "offline", start_date: new Date(Date.now() + 86_400_000).toISOString(), end_date: new Date(Date.now() + 172_800_000).toISOString(), volunteer_hours: 6, required_volunteers: 3, status: "published" }).select("id").single();
+  const { data: project, error: projectError } = await coordinator.from("projects").insert({ coordinator_id: coordinatorId, title: "Qamqor smoke test project", description: "Временный проект для проверки полного рабочего цикла платформы Qamqor.", category: "Экология", city: "Алматы", address: "Тестовый адрес", format: "offline", start_date: new Date(Date.now() + 86_400_000).toISOString(), end_date: new Date(Date.now() + 172_800_000).toISOString(), volunteer_hours: 6, required_volunteers: 3, benefits: ["volunteer_hours", "meals"], status: "published" }).select("id").single();
   assert.ifError(projectError);
 
   const { data: application, error: applicationError } = await volunteer.from("project_applications").insert({ project_id: project.id, volunteer_id: volunteerId }).select("id,status").single();
