@@ -32,12 +32,26 @@ try {
   assert.ifError(volunteerLoginError);
   assert.ifError(coordinatorLoginError);
 
-  const { data: project, error: projectError } = await coordinator.from("projects").insert({ coordinator_id: coordinatorId, title: "Qamqor smoke test project", description: "Временный проект для проверки полного рабочего цикла платформы Qamqor.", category: "Экология", city: "Алматы", address: "Тестовый адрес", format: "offline", start_date: new Date(Date.now() + 86_400_000).toISOString(), end_date: new Date(Date.now() + 172_800_000).toISOString(), volunteer_hours: 6, required_volunteers: 3, benefits: ["volunteer_hours", "meals"], status: "published" }).select("id").single();
+  const { data: project, error: projectError } = await coordinator.from("projects").insert({ coordinator_id: coordinatorId, title: "Qamqor smoke test project", description: "Временный проект для проверки полного рабочего цикла платформы Qamqor.", category: "Экология", city: "Алматы", address: "Тестовый адрес", format: "offline", start_date: new Date(Date.now() + 86_400_000).toISOString(), end_date: new Date(Date.now() + 172_800_000).toISOString(), volunteer_hours: 6, required_volunteers: 3, benefits: ["volunteer_hours", "meals"], status: "draft" }).select("id").single();
   assert.ifError(projectError);
+
+  const whatsappGroupUrl = "https://chat.whatsapp.com/QamqorSmokeTest123456";
+  const { error: whatsappCreateError } = await coordinator.from("project_whatsapp_groups").insert({ project_id: project.id, whatsapp_group_url: whatsappGroupUrl });
+  assert.ifError(whatsappCreateError);
+  const { error: publishError } = await coordinator.from("projects").update({ status: "published" }).eq("id", project.id);
+  assert.ifError(publishError);
+
+  const { data: hiddenWhatsappGroup, error: hiddenWhatsappError } = await volunteer.from("project_whatsapp_groups").select("whatsapp_group_url").eq("project_id", project.id);
+  assert.ifError(hiddenWhatsappError);
+  assert.equal(hiddenWhatsappGroup?.length, 0, "WhatsApp link must be hidden before application");
 
   const { data: application, error: applicationError } = await volunteer.from("project_applications").insert({ project_id: project.id, volunteer_id: volunteerId }).select("id,status").single();
   assert.ifError(applicationError);
   assert.equal(application.status, "pending");
+
+  const { data: visibleWhatsappGroup, error: visibleWhatsappError } = await volunteer.from("project_whatsapp_groups").select("whatsapp_group_url").eq("project_id", project.id).single();
+  assert.ifError(visibleWhatsappError);
+  assert.equal(visibleWhatsappGroup.whatsapp_group_url, whatsappGroupUrl);
 
   const { error: duplicateError } = await volunteer.from("project_applications").insert({ project_id: project.id, volunteer_id: volunteerId });
   assert(duplicateError, "Duplicate application must be rejected");
@@ -73,7 +87,7 @@ try {
   assert.equal(publicProfile.id, volunteerId);
   assert.equal(Number(publicProfile.confirmed_hours), 6);
 
-  console.log("Supabase smoke test passed: auth, RLS, project CRUD, application, hours, achievement and certificate.");
+  console.log("Supabase smoke test passed: auth, RLS, project CRUD, private WhatsApp access, application, hours, achievement and certificate.");
 } finally {
   if (coordinatorId) await admin.auth.admin.deleteUser(coordinatorId);
   if (volunteerId) await admin.auth.admin.deleteUser(volunteerId);

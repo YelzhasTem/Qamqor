@@ -41,6 +41,7 @@ export async function updateApplicationStatusAction(applicationId: string, proje
   if (error) return { success: false, error: error.message };
   revalidatePath(`/coordinator/projects/${projectId}/applications`);
   revalidatePath(`/projects/${projectId}`);
+  revalidatePath("/my-projects");
   revalidatePath("/dashboard");
   return { success: true };
 }

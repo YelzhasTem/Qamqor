@@ -47,17 +47,36 @@ export async function createProjectAction(formData: FormData): Promise<ActionRes
   }
 
   const supabase = await createClient();
+  const { whatsapp_group_url: whatsappGroupUrl, status: requestedStatus, ...projectValues } = parsed.data;
   const { data, error } = await supabase.from("projects").insert({
-    ...parsed.data,
-    address: parsed.data.address || null,
-    requirements: parsed.data.requirements || null,
+    ...projectValues,
+    address: projectValues.address || null,
+    requirements: projectValues.requirements || null,
     cover_url: coverUrl,
     coordinator_id: profile.id,
-    start_date: new Date(parsed.data.start_date).toISOString(),
-    end_date: new Date(parsed.data.end_date).toISOString(),
+    start_date: new Date(projectValues.start_date).toISOString(),
+    end_date: new Date(projectValues.end_date).toISOString(),
+    status: "draft",
   }).select("id").single();
 
   if (error) return { success: false, error: error.message };
+
+  const { error: groupError } = await supabase.from("project_whatsapp_groups").insert({
+    project_id: data.id,
+    whatsapp_group_url: whatsappGroupUrl,
+  });
+  if (groupError) {
+    await supabase.from("projects").delete().eq("id", data.id).eq("coordinator_id", profile.id);
+    return { success: false, error: groupError.message };
+  }
+
+  if (requestedStatus === "published") {
+    const { error: publishError } = await supabase.from("projects").update({ status: "published" }).eq("id", data.id).eq("coordinator_id", profile.id);
+    if (publishError) {
+      await supabase.from("projects").delete().eq("id", data.id).eq("coordinator_id", profile.id);
+      return { success: false, error: publishError.message };
+    }
+  }
   revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath("/coordinator/projects");
@@ -82,14 +101,21 @@ export async function saveProjectAction(projectId: string, formData: FormData): 
     return { success: false, error: error instanceof Error ? error.message : "Не удалось загрузить изображение" };
   }
 
+  const { whatsapp_group_url: whatsappGroupUrl, ...projectValues } = parsed.data;
+  const { error: groupError } = await supabase.from("project_whatsapp_groups").upsert({
+    project_id: projectId,
+    whatsapp_group_url: whatsappGroupUrl,
+  }, { onConflict: "project_id" });
+  if (groupError) return { success: false, error: groupError.message };
+
   const payload = {
-    ...parsed.data,
-    address: parsed.data.address || null,
-    requirements: parsed.data.requirements || null,
+    ...projectValues,
+    address: projectValues.address || null,
+    requirements: projectValues.requirements || null,
     cover_url: coverUrl,
     coordinator_id: profile.id,
-    start_date: new Date(parsed.data.start_date).toISOString(),
-    end_date: new Date(parsed.data.end_date).toISOString(),
+    start_date: new Date(projectValues.start_date).toISOString(),
+    end_date: new Date(projectValues.end_date).toISOString(),
   };
   const { data, error } = await supabase.from("projects").update(payload).eq("id", projectId).eq("coordinator_id", profile.id).select("id").single();
   if (error) return { success: false, error: error.message };

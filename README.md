@@ -29,6 +29,7 @@ Qamqor is a volunteer management platform that brings volunteers, project coordi
 - Project creation, publishing, editing and deletion
 - Optional cover upload with a reusable Qamqor fallback illustration
 - Fixed project-benefit options: letters, volunteer hours, meals, transport and merch
+- Required WhatsApp group invite for every new project
 - Applicant review, approval, rejection and attendance marking
 - Actual-hours confirmation
 - Project and applicant statistics
@@ -49,6 +50,7 @@ Qamqor is a volunteer management platform that brings volunteers, project coordi
 - Profile rows are created automatically after Supabase signup
 - Confirmed hours automatically award achievements and issue certificates
 - Storage policies isolate avatar and project-cover uploads by owner
+- WhatsApp invite links are private to the project owner and volunteers with a current application
 
 ### Navigation
 
