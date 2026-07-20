@@ -7,6 +7,7 @@ import { MobileDashboardNav } from "@/components/layout/mobile-dashboard-nav";
 import { signOutAction } from "@/lib/actions/auth";
 import { getCurrentProfile } from "@/lib/auth";
 import { initials } from "@/lib/utils";
+import { roleSummary } from "@/types/roles";
 import { redirect } from "next/navigation";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -20,7 +21,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className="mt-auto border-t pt-5">
           <div className="flex items-center gap-3 px-2">
             <Avatar><AvatarImage src={profile.avatar_url ?? undefined} alt={profile.full_name} /><AvatarFallback>{initials(profile.full_name)}</AvatarFallback></Avatar>
-            <div className="min-w-0"><p className="truncate text-sm font-bold">{profile.full_name}</p><p className="text-xs text-muted-foreground">{profile.role === "coordinator" ? "Координатор" : "Волонтёр"}</p></div>
+            <div className="min-w-0"><p className="truncate text-sm font-bold">{profile.full_name}</p><p className="truncate text-xs text-muted-foreground">{roleSummary(profile.role)}</p></div>
           </div>
           <form action={signOutAction} className="mt-4"><Button type="submit" variant="ghost" className="w-full justify-start text-muted-foreground"><LogOut />Выйти</Button></form>
         </div>
