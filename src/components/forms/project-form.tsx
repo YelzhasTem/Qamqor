@@ -31,7 +31,7 @@ import {
   type ProjectBenefit,
 } from "@/lib/project-benefits";
 import { cn } from "@/lib/utils";
-import { projectSchema } from "@/lib/validations";
+import { projectSchema, registrationCities } from "@/lib/validations";
 import type { Project } from "@/types/app";
 
 type Values = z.input<typeof projectSchema>;
@@ -61,6 +61,14 @@ const toLocalDate = (value?: string) => value
   ? new Date(new Date(value).getTime() - new Date(value).getTimezoneOffset() * 60000).toISOString().slice(0, 16)
   : "";
 
+function toProjectCity(value?: string | null) {
+  const normalized = value?.trim().toLocaleLowerCase("ru-RU");
+  if (normalized === "almaty" || normalized === "алматы") return "Алматы" as const;
+  if (normalized === "astana" || normalized === "астана") return "Астана" as const;
+  if (normalized === "shymkent" || normalized === "шымкент") return "Шымкент" as const;
+  return undefined;
+}
+
 export function ProjectForm({ project, defaultCity = "" }: { project?: Project; defaultCity?: string }) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -78,7 +86,7 @@ export function ProjectForm({ project, defaultCity = "" }: { project?: Project; 
       title: project?.title ?? "",
       description: project?.description ?? "",
       category: project?.category ?? "",
-      city: project?.city ?? defaultCity,
+      city: toProjectCity(project?.city ?? defaultCity),
       address: project?.address ?? "",
       format: project?.format ?? "offline",
       start_date: toLocalDate(project?.start_date),
@@ -140,7 +148,10 @@ export function ProjectForm({ project, defaultCity = "" }: { project?: Project; 
             </select>
           </Field>
           <Field label="Город" error={errors.city?.message}>
-            <Input {...register("city")} placeholder="Алматы" />
+            <select {...register("city")} className={selectClass}>
+              <option value="">Выберите город</option>
+              {registrationCities.map((city) => <option key={city} value={city}>{city}</option>)}
+            </select>
           </Field>
         </div>
       </CardSection>
