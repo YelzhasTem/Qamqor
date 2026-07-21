@@ -1,10 +1,14 @@
+"use client";
+
 import Image from "next/image";
+import { useLanguage } from "@/components/marketing/language-provider";
 import { DEFAULT_PROJECT_COVER } from "@/lib/project-benefits";
 import { cn } from "@/lib/utils";
 
 export function ProjectCover({ src, title, className, priority = false }: { src?: string | null; title: string; className?: string; priority?: boolean }) {
+  const { copy } = useLanguage();
   const imageSrc = src || DEFAULT_PROJECT_COVER;
-  const alt = src ? title : "Волонтёры Qamqor помогают сообществу";
+  const alt = src ? title : copy.common.defaultProjectImageAlt;
 
   return <div className={cn("relative overflow-hidden bg-primary/10", className)}>
     {src ? <>

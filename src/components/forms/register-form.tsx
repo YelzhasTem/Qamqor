@@ -7,12 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CheckCircle2, Loader2, MailCheck, RefreshCw } from "lucide-react";
 import { z } from "zod";
+import { useLanguage } from "@/components/marketing/language-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormMessage } from "@/components/shared/form-message";
 import { normalizeKazakhstanPhone, registerSchema } from "@/lib/validations";
 import { createClient } from "@/lib/supabase/client";
+import { translateValue } from "@/lib/i18n/marketing-copy";
 
 type RegisterValues = z.infer<typeof registerSchema>;
 type RegistrationStep = "form" | "waiting" | "finishing";
@@ -25,6 +27,7 @@ const AUTO_CHECK_TIMEOUT = 10 * 60_000;
 
 export function RegisterForm() {
   const router = useRouter();
+  const { copy } = useLanguage();
   const [message, setMessage] = useState<{ text: string; type: "error" | "success" }>();
   const [step, setStep] = useState<RegistrationStep>("form");
   const [pendingEmail, setPendingEmail] = useState("");
@@ -61,9 +64,9 @@ export function RegisterForm() {
       return "retry";
     }
 
-    setAutoSignInError("Не удалось завершить вход автоматически. Проверьте подтверждение или войдите вручную.");
+    setAutoSignInError(copy.auth.autoLoginError);
     return "stopped";
-  }, [router]);
+  }, [copy.auth.autoLoginError, router]);
 
   useEffect(() => {
     if (step !== "waiting") return;
@@ -84,7 +87,7 @@ export function RegisterForm() {
 
       const elapsed = Date.now() - startedAt;
       if (elapsed >= AUTO_CHECK_TIMEOUT) {
-        setAutoSignInError("Ожидание заняло больше 10 минут. Нажмите «Проверить сейчас» или войдите вручную.");
+        setAutoSignInError(copy.auth.waitTimeout);
         return;
       }
 
@@ -108,7 +111,7 @@ export function RegisterForm() {
       window.removeEventListener("focus", checkWhenActive);
       document.removeEventListener("visibilitychange", checkWhenActive);
     };
-  }, [completeRegistration, step]);
+  }, [completeRegistration, copy.auth.waitTimeout, step]);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -147,7 +150,7 @@ export function RegisterForm() {
       return;
     }
     setResendCooldown(60);
-    setMessage({ text: "Новое письмо отправлено.", type: "success" });
+    setMessage({ text: copy.auth.newEmailSent, type: "success" });
   };
 
   const changeEmail = () => {
@@ -165,34 +168,34 @@ export function RegisterForm() {
         {step === "finishing" ? <CheckCircle2 className="size-8" /> : <MailCheck className="size-8" />}
       </div>
       <div>
-        <h2 className="text-xl font-black tracking-tight">{step === "finishing" ? "Почта подтверждена" : "Подтвердите email"}</h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">Письмо отправлено на <strong className="font-bold text-foreground">{pendingEmail}</strong></p>
+        <h2 className="text-xl font-black tracking-tight">{step === "finishing" ? copy.auth.emailConfirmed : copy.auth.confirmEmail}</h2>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">{copy.auth.emailSentTo} <strong className="font-bold text-foreground">{pendingEmail}</strong></p>
       </div>
       <div className="rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4 text-left">
         <div className="flex items-center gap-3 text-sm font-bold text-foreground">
           <Loader2 className="size-5 shrink-0 animate-spin text-primary" />
-          {step === "finishing" ? "Открываем личный кабинет…" : "Ждём подтверждения…"}
+          {step === "finishing" ? copy.auth.openingAccount : copy.auth.waitingConfirmation}
         </div>
-        <p className="mt-2 pl-8 text-xs leading-5 text-muted-foreground">Откройте письмо на телефоне или компьютере и нажмите кнопку подтверждения. Эта вкладка завершит вход автоматически.</p>
+        <p className="mt-2 pl-8 text-xs leading-5 text-muted-foreground">{copy.auth.confirmationInstruction}</p>
       </div>
       <FormMessage message={autoSignInError ?? message?.text} type={autoSignInError ? "error" : message?.type} />
       {step === "waiting" ? <div className="grid gap-2">
-        <Button type="button" variant="outline" onClick={() => void completeRegistration()}><RefreshCw />Проверить сейчас</Button>
-        <Button type="button" variant="ghost" disabled={resendCooldown > 0} onClick={() => void resendConfirmation()}>{resendCooldown > 0 ? `Отправить повторно через ${resendCooldown} сек.` : "Отправить письмо повторно"}</Button>
-        <Button type="button" variant="link" onClick={changeEmail}>Изменить email</Button>
-        {autoSignInError ? <Button asChild variant="link"><Link href="/auth/login">Войти вручную</Link></Button> : null}
+        <Button type="button" variant="outline" onClick={() => void completeRegistration()}><RefreshCw />{copy.auth.checkNow}</Button>
+        <Button type="button" variant="ghost" disabled={resendCooldown > 0} onClick={() => void resendConfirmation()}>{resendCooldown > 0 ? `${copy.auth.resendIn} ${resendCooldown} ${copy.auth.secondsShort}` : copy.auth.resend}</Button>
+        <Button type="button" variant="link" onClick={changeEmail}>{copy.auth.changeEmail}</Button>
+        {autoSignInError ? <Button asChild variant="link"><Link href="/auth/login">{copy.auth.loginManually}</Link></Button> : null}
       </div> : null}
-      <p className="text-xs leading-5 text-muted-foreground">Не закрывайте и не обновляйте эту вкладку до завершения входа.</p>
+      <p className="text-xs leading-5 text-muted-foreground">{copy.auth.keepTabOpen}</p>
     </div>;
   }
 
   return <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
     <input type="hidden" {...register("role")} />
-    <div className="grid gap-2"><Label htmlFor="fullName">Имя и фамилия</Label><Input id="fullName" autoComplete="name" placeholder="Алия Садыкова" {...register("fullName")} /><p className="text-xs text-danger-foreground">{errors.fullName?.message}</p></div>
-    <div className="grid gap-2"><Label htmlFor="phone">Номер телефона</Label><Input id="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+7 700 123 45 67" {...register("phone")} /><p className="text-xs text-danger-foreground">{errors.phone?.message}</p></div>
-    <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...register("email")} /><p className="text-xs text-danger-foreground">{errors.email?.message}</p></div>
-    <div className="grid gap-2"><Label htmlFor="password">Пароль</Label><Input id="password" type="password" autoComplete="new-password" placeholder="Минимум 8 символов" {...register("password")} /><p className="text-xs text-danger-foreground">{errors.password?.message}</p></div>
+    <div className="grid gap-2"><Label htmlFor="fullName">{copy.auth.fullName}</Label><Input id="fullName" autoComplete="name" placeholder={copy.auth.fullNamePlaceholder} {...register("fullName")} /><p className="text-xs text-danger-foreground">{translateValue(errors.fullName?.message ?? "", copy.auth.validation)}</p></div>
+    <div className="grid gap-2"><Label htmlFor="phone">{copy.auth.phone}</Label><Input id="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+7 700 123 45 67" {...register("phone")} /><p className="text-xs text-danger-foreground">{translateValue(errors.phone?.message ?? "", copy.auth.validation)}</p></div>
+    <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...register("email")} /><p className="text-xs text-danger-foreground">{translateValue(errors.email?.message ?? "", copy.auth.validation)}</p></div>
+    <div className="grid gap-2"><Label htmlFor="password">{copy.auth.password}</Label><Input id="password" type="password" autoComplete="new-password" placeholder={copy.auth.passwordPlaceholder} {...register("password")} /><p className="text-xs text-danger-foreground">{translateValue(errors.password?.message ?? "", copy.auth.validation)}</p></div>
     <FormMessage message={message?.text} type={message?.type} />
-    <Button type="submit" size="lg" disabled={isSubmitting}>{isSubmitting ? <Loader2 className="animate-spin" /> : null}Создать аккаунт</Button>
+    <Button type="submit" size="lg" disabled={isSubmitting}>{isSubmitting ? <Loader2 className="animate-spin" /> : null}{copy.auth.createAccount}</Button>
   </form>;
 }

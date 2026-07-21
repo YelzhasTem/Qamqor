@@ -1,18 +1,10 @@
+"use client";
+
+import { useLanguage } from "@/components/marketing/language-provider";
 import { Badge } from "@/components/ui/badge";
 
-const statusLabels: Record<string, string> = {
-  draft: "Черновик",
-  published: "Опубликован",
-  completed: "Завершён",
-  cancelled: "Отменён",
-  pending: "На рассмотрении",
-  approved: "Одобрено",
-  rejected: "Отклонено",
-  attended: "Участие отмечено",
-  confirmed: "Подтверждено",
-};
-
 export function StatusBadge({ status }: { status: string }) {
+  const { copy } = useLanguage();
   const variant = status === "approved" || status === "confirmed" || status === "completed"
     ? "success"
     : status === "published" || status === "attended"
@@ -22,5 +14,6 @@ export function StatusBadge({ status }: { status: string }) {
       : status === "pending" || status === "draft"
         ? "warning"
         : "secondary";
-  return <Badge variant={variant}>{statusLabels[status] ?? status}</Badge>;
+  const label = copy.statuses[status as keyof typeof copy.statuses] ?? status;
+  return <Badge variant={variant}>{label}</Badge>;
 }
