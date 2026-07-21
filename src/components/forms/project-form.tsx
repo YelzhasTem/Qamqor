@@ -31,7 +31,7 @@ import {
   type ProjectBenefit,
 } from "@/lib/project-benefits";
 import { cn } from "@/lib/utils";
-import { projectSchema, registrationCities } from "@/lib/validations";
+import { projectCities, projectSchema } from "@/lib/validations";
 import type { Project } from "@/types/app";
 
 type Values = z.input<typeof projectSchema>;
@@ -69,7 +69,7 @@ function toProjectCity(value?: string | null) {
   return undefined;
 }
 
-export function ProjectForm({ project, defaultCity = "", whatsappGroupUrl = "" }: { project?: Project; defaultCity?: string; whatsappGroupUrl?: string }) {
+export function ProjectForm({ project, whatsappGroupUrl = "" }: { project?: Project; whatsappGroupUrl?: string }) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(project?.cover_url ?? null);
@@ -86,7 +86,7 @@ export function ProjectForm({ project, defaultCity = "", whatsappGroupUrl = "" }
       title: project?.title ?? "",
       description: project?.description ?? "",
       category: project?.category ?? "",
-      city: toProjectCity(project?.city ?? defaultCity),
+      city: toProjectCity(project?.city),
       address: project?.address ?? "",
       format: project?.format ?? "offline",
       start_date: toLocalDate(project?.start_date),
@@ -151,7 +151,7 @@ export function ProjectForm({ project, defaultCity = "", whatsappGroupUrl = "" }
           <Field label="Город" error={errors.city?.message}>
             <select {...register("city")} className={selectClass}>
               <option value="">Выберите город</option>
-              {registrationCities.map((city) => <option key={city} value={city}>{city}</option>)}
+              {projectCities.map((city) => <option key={city} value={city}>{city}</option>)}
             </select>
           </Field>
         </div>

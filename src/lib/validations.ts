@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { projectBenefitValues } from "@/lib/project-benefits";
 
-export const registrationCities = ["Алматы", "Астана", "Шымкент"] as const;
+export const projectCities = ["Алматы", "Астана", "Шымкент"] as const;
 
 export function normalizeKazakhstanPhone(value: string) {
   return `+${value.replace(/\D/g, "")}`;
@@ -20,7 +20,6 @@ export const loginSchema = z.object({
 
 export const registerSchema = z.object({
   fullName: z.string().trim().min(2, "Укажите имя").max(120),
-  city: z.enum(registrationCities, { error: "Выберите город" }),
   phone: kazakhstanPhoneSchema,
   email: z.email("Введите корректный email"),
   password: z.string().min(8, "Минимум 8 символов").max(72),
@@ -35,7 +34,6 @@ export const passwordSchema = z.object({
 
 export const profileSchema = z.object({
   full_name: z.string().trim().min(2, "Укажите имя").max(120),
-  city: z.string().trim().max(100).optional().or(z.literal("")),
   phone: z.string().trim().max(32).optional().or(z.literal("")),
   bio: z.string().trim().max(1000).optional().or(z.literal("")),
 });
@@ -44,7 +42,7 @@ export const projectSchema = z.object({
   title: z.string().trim().min(3, "Минимум 3 символа").max(160),
   description: z.string().trim().min(20, "Расскажите о проекте подробнее").max(6000),
   category: z.string().trim().min(2, "Выберите категорию").max(80),
-  city: z.enum(registrationCities, { error: "Выберите город" }),
+  city: z.enum(projectCities, { error: "Выберите город" }),
   address: z.string().trim().max(300).optional().or(z.literal("")),
   format: z.enum(["online", "offline"]),
   start_date: z.string().min(1, "Укажите дату начала"),

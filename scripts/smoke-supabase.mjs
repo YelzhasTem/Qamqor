@@ -21,12 +21,17 @@ try {
   const { data: volunteerUser, error: volunteerCreateError } = await admin.auth.admin.createUser({ email: `volunteer-${suffix}@example.com`, password, email_confirm: true, user_metadata: { full_name: "Тестовый Волонтёр", city: "Алматы", role: "volunteer" } });
   assert.ifError(volunteerCreateError);
   volunteerId = volunteerUser.user.id;
+  const { data: sanitizedVolunteer, error: sanitizedVolunteerError } = await admin.auth.admin.getUserById(volunteerId);
+  assert.ifError(sanitizedVolunteerError);
+  assert.equal(sanitizedVolunteer.user.user_metadata.city, undefined, "User city metadata must be removed at registration");
+  const { error: removedProfileCityError } = await admin.from("profiles").select("city").limit(1);
+  assert(removedProfileCityError, "Profiles must not expose a city column");
 
-  const { data: coordinatorUser, error: coordinatorCreateError } = await admin.auth.admin.createUser({ email: `coordinator-${suffix}@example.com`, password, email_confirm: true, user_metadata: { full_name: "Тестовый Координатор", city: "Алматы", role: "coordinator" } });
+  const { data: coordinatorUser, error: coordinatorCreateError } = await admin.auth.admin.createUser({ email: `coordinator-${suffix}@example.com`, password, email_confirm: true, user_metadata: { full_name: "Тестовый Координатор", role: "coordinator" } });
   assert.ifError(coordinatorCreateError);
   coordinatorId = coordinatorUser.user.id;
 
-  const { data: platformAdminUser, error: platformAdminCreateError } = await admin.auth.admin.createUser({ email: `admin-${suffix}@example.com`, password, email_confirm: true, user_metadata: { full_name: "Тестовый Администратор", city: "Астана" } });
+  const { data: platformAdminUser, error: platformAdminCreateError } = await admin.auth.admin.createUser({ email: `admin-${suffix}@example.com`, password, email_confirm: true, user_metadata: { full_name: "Тестовый Администратор" } });
   assert.ifError(platformAdminCreateError);
   platformAdminId = platformAdminUser.user.id;
 
@@ -41,6 +46,11 @@ try {
   assert.ifError(volunteerLoginError);
   assert.ifError(coordinatorLoginError);
   assert.ifError(platformAdminLoginError);
+
+  const { data: listedUsers, error: listUsersError } = await platformAdmin.rpc("admin_list_users");
+  assert.ifError(listUsersError);
+  assert(listedUsers.length >= 3, "Administrator must be able to list users");
+  assert.equal("city" in listedUsers[0], false, "Administrator user list must not expose a city");
 
   const { data: project, error: projectError } = await coordinator.from("projects").insert({ coordinator_id: coordinatorId, title: "Qamqor smoke test project", description: "Временный проект для проверки полного рабочего цикла платформы Qamqor.", category: "Экология", city: "Алматы", address: "Тестовый адрес", format: "offline", start_date: new Date(Date.now() + 86_400_000).toISOString(), end_date: new Date(Date.now() + 172_800_000).toISOString(), volunteer_hours: 6, required_volunteers: 3, benefits: ["volunteer_hours", "meals"], status: "draft" }).select("id").single();
   assert.ifError(projectError);
@@ -106,7 +116,7 @@ try {
   assert.equal(deletedVolunteer.user, null, "Administrator deletion must remove the Auth account");
   volunteerId = undefined;
 
-  console.log("Supabase smoke test passed: auth, roles, RLS, project CRUD, private WhatsApp access, application, hours, achievement, certificate and admin-only volunteer deletion.");
+  console.log("Supabase smoke test passed: auth without user cities, roles, RLS, project CRUD, private WhatsApp access, application, hours, achievement, certificate and admin-only volunteer deletion.");
 } finally {
   if (platformAdminId) await admin.auth.admin.deleteUser(platformAdminId);
   if (coordinatorId) await admin.auth.admin.deleteUser(coordinatorId);
