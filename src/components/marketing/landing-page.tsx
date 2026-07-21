@@ -10,8 +10,6 @@ import {
   Check,
   ChevronRight,
   Clock3,
-  FileCheck2,
-  FolderKanban,
   HeartHandshake,
   Leaf,
   MapPin,
@@ -39,11 +37,7 @@ const activityIcons = [Leaf, PawPrint, HeartHandshake, UsersRound];
 export function LandingPage({ stats, projects }: LandingPageProps) {
   const { locale, copy } = useLanguage();
   const numberLocale = locale === "kk" ? "kk-KZ" : locale === "en" ? "en-US" : "ru-RU";
-  const visibleStats = {
-    volunteers: stats.volunteers || 1280,
-    projects: stats.projects || 86,
-    confirmedHours: stats.confirmedHours || 12460,
-  };
+  const numberFormatter = new Intl.NumberFormat(numberLocale);
 
   return (
     <div className="marketing-page overflow-hidden">
@@ -69,10 +63,10 @@ export function LandingPage({ stats, projects }: LandingPageProps) {
             <div className="hero-image-card">
               <Image src="/illustrations/qamqor-hero.png" alt={copy.hero.imageAlt} fill priority sizes="(max-width: 1024px) 100vw, 54vw" className="object-cover" />
             </div>
-            <div className="hero-float-card hero-float-top"><span className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary"><UsersRound className="size-4" /></span><span>{copy.hero.floating}</span></div>
+            <div className="hero-float-card hero-float-top"><span className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary"><UsersRound className="size-4" /></span><span>{copy.hero.community}: {numberFormatter.format(stats.volunteers)}</span></div>
             <div className="hero-float-card hero-float-bottom">
               <span className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground"><ShieldCheck className="size-5" /></span>
-              <span><small>{copy.hero.metric}</small><strong>{copy.hero.hours}</strong><em>{copy.hero.confirmed}</em></span>
+              <span><small>{copy.hero.metric}</small><strong>{numberFormatter.format(stats.confirmedHours)}</strong><em>{copy.hero.confirmed}</em></span>
             </div>
             <span className="hero-heart hero-heart-one" aria-hidden="true">♥</span>
             <span className="hero-heart hero-heart-two" aria-hidden="true">♥</span>
@@ -84,9 +78,9 @@ export function LandingPage({ stats, projects }: LandingPageProps) {
         <div className="page-shell">
           <div className="stats-panel">
             <div className="grid flex-1 grid-cols-3 gap-2">
-              <LandingStat value={visibleStats.volunteers} label={copy.stats.volunteers} locale={numberLocale} />
-              <LandingStat value={visibleStats.projects} label={copy.stats.projects} locale={numberLocale} />
-              <LandingStat value={visibleStats.confirmedHours} label={copy.stats.hours} locale={numberLocale} />
+              <LandingStat value={stats.volunteers} label={copy.stats.volunteers} locale={numberLocale} />
+              <LandingStat value={stats.projects} label={copy.stats.projects} locale={numberLocale} />
+              <LandingStat value={stats.confirmedHours} label={copy.stats.hours} locale={numberLocale} />
             </div>
             <p className="hidden max-w-[14rem] text-sm font-bold leading-6 text-primary-foreground/70 lg:block">{copy.stats.note}</p>
           </div>
@@ -163,36 +157,19 @@ export function LandingPage({ stats, projects }: LandingPageProps) {
         </div>
       </section>
 
-      <section className="projects-section landing-section">
-        <div className="page-shell">
-          <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-            <div className="max-w-2xl"><SectionEyebrow>{copy.projects.eyebrow}</SectionEyebrow><h2 className="marketing-heading mt-4 text-balance text-4xl tracking-[-0.04em] sm:text-5xl">{copy.projects.title}</h2><p className="mt-4 text-lg leading-8 text-muted-foreground">{copy.projects.description}</p></div>
-            <Button asChild variant="outline" className="rounded-full"><Link href="/projects">{copy.projects.all}<ArrowRight /></Link></Button>
-          </Reveal>
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <LandingProjectCards projects={projects} />
-          </div>
-        </div>
-      </section>
-
-      <section id="about" className="landing-section">
-        <div className="page-shell">
-          <Reveal>
-            <div className="impact-panel">
-              <div className="max-w-xl">
-                <SectionEyebrow light>{copy.impact.eyebrow}</SectionEyebrow>
-                <h2 className="marketing-heading mt-5 text-balance text-4xl tracking-[-0.04em] text-primary-foreground sm:text-5xl">{copy.impact.title}</h2>
-                <p className="mt-5 text-lg leading-8 text-primary-foreground/75">{copy.impact.description}</p>
-              </div>
-              <div className="journey-card">
-                <div className="flex items-center justify-between"><div><p className="text-xs font-black uppercase tracking-[.18em] text-primary">{copy.impact.cardTitle}</p><p className="mt-1 text-sm font-bold text-muted-foreground">{copy.impact.cardSubtitle}</p></div><span className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground"><Award className="size-5" /></span></div>
-                <div className="mt-6 rounded-[1.4rem] bg-primary/6 p-5"><div className="flex items-end justify-between gap-4"><div><p className="text-sm font-bold text-muted-foreground">{copy.impact.achievement}</p><p className="mt-1 text-2xl font-black">{copy.impact.progress}</p></div><span className="text-3xl">🏅</span></div><div className="mt-4 h-2.5 overflow-hidden rounded-full bg-primary/10"><div className="progress-fill h-full w-[96%] rounded-full bg-primary" /></div></div>
-                <div className="mt-4 grid grid-cols-3 gap-3"><JourneyStat icon={CalendarCheck2} value="2" label={copy.impact.active} /><JourneyStat icon={Check} value="7" label={copy.impact.completed} /><JourneyStat icon={FileCheck2} value="3" label={copy.impact.certificates} /></div>
-              </div>
+      {projects.length ? (
+        <section className="projects-section landing-section">
+          <div className="page-shell">
+            <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+              <div className="max-w-2xl"><SectionEyebrow>{copy.projects.eyebrow}</SectionEyebrow><h2 className="marketing-heading mt-4 text-balance text-4xl tracking-[-0.04em] sm:text-5xl">{copy.projects.title}</h2><p className="mt-4 text-lg leading-8 text-muted-foreground">{copy.projects.description}</p></div>
+              <Button asChild variant="outline" className="rounded-full"><Link href="/projects">{copy.projects.all}<ArrowRight /></Link></Button>
+            </Reveal>
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <LandingProjectCards projects={projects} />
             </div>
-          </Reveal>
-        </div>
-      </section>
+          </div>
+        </section>
+      ) : null}
 
       <section className="landing-section pt-4">
         <div className="page-shell">
@@ -217,18 +194,6 @@ export function LandingPage({ stats, projects }: LandingPageProps) {
 function LandingProjectCards({ projects }: { projects: ProjectWithMeta[] }) {
   const { locale, copy } = useLanguage();
   const dateLocale = locale === "kk" ? "kk-KZ" : locale === "en" ? "en-US" : "ru-RU";
-  if (!projects.length) {
-    return (
-      <Reveal className="md:col-span-2 lg:col-span-3">
-        <div className="flex min-h-64 flex-col items-center justify-center rounded-[2rem] border bg-surface px-6 text-center shadow-sm">
-          <span className="flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary"><FolderKanban className="size-7" /></span>
-          <h3 className="marketing-heading mt-5 text-2xl tracking-tight">{copy.projects.emptyTitle}</h3>
-          <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">{copy.projects.emptyDescription}</p>
-        </div>
-      </Reveal>
-    );
-  }
-
   const cards = projects.slice(0, 3).map((project) => ({
     id: project.id,
     title: project.title,
@@ -265,9 +230,5 @@ function SectionEyebrow({ children, light = false }: { children: React.ReactNode
 }
 
 function LandingStat({ value, label, locale }: { value: number; label: string; locale: string }) {
-  return <div className="px-2 sm:px-5"><p className="marketing-heading text-2xl tracking-tight text-primary-foreground sm:text-5xl">{new Intl.NumberFormat(locale).format(value)}+</p><p className="mt-1 text-[11px] font-bold leading-4 text-primary-foreground/70 sm:text-sm">{label}</p></div>;
-}
-
-function JourneyStat({ icon: Icon, value, label }: { icon: typeof Check; value: string; label: string }) {
-  return <div className="rounded-2xl border bg-surface p-3"><Icon className="size-4 text-primary" /><p className="mt-3 text-xl font-black">{value}</p><p className="mt-0.5 text-[10px] font-bold leading-4 text-muted-foreground">{label}</p></div>;
+  return <div className="px-2 sm:px-5"><p className="marketing-heading text-2xl tracking-tight text-primary-foreground sm:text-5xl">{new Intl.NumberFormat(locale).format(value)}</p><p className="mt-1 text-[11px] font-bold leading-4 text-primary-foreground/70 sm:text-sm">{label}</p></div>;
 }

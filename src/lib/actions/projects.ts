@@ -119,6 +119,7 @@ export async function saveProjectAction(projectId: string, formData: FormData): 
   };
   const { data, error } = await supabase.from("projects").update(payload).eq("id", projectId).eq("coordinator_id", profile.id).select("id").single();
   if (error) return { success: false, error: error.message };
+  revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath("/coordinator/projects");
   revalidatePath("/dashboard");
@@ -132,6 +133,7 @@ export async function deleteProjectAction(projectId: string): Promise<ActionResu
   const supabase = await createClient();
   const { error } = await supabase.from("projects").delete().eq("id", projectId).eq("coordinator_id", profile.id);
   if (error) return { success: false, error: error.message };
+  revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath("/coordinator/projects");
   revalidatePath("/dashboard");
@@ -147,6 +149,7 @@ export async function setProjectStatusAction(projectId: string, status: "draft" 
   if (status === "completed") {
     await supabase.from("project_applications").update({ status: "completed" }).eq("project_id", projectId).in("status", ["approved", "attended"]);
   }
+  revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath(`/projects/${projectId}`);
   revalidatePath("/coordinator/projects");
