@@ -10,10 +10,12 @@ const options = { auth: { persistSession: false, autoRefreshToken: false, detect
 const admin = createClient(url, serviceKey, options);
 const volunteer = createClient(url, anonKey, options);
 const coordinator = createClient(url, anonKey, options);
+const platformAdmin = createClient(url, anonKey, options);
 const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const password = `Qamqor-${crypto.randomUUID()}!`;
 let volunteerId;
 let coordinatorId;
+let platformAdminId;
 
 try {
   const { data: volunteerUser, error: volunteerCreateError } = await admin.auth.admin.createUser({ email: `volunteer-${suffix}@example.com`, password, email_confirm: true, user_metadata: { full_name: "Тестовый Волонтёр", city: "Алматы", role: "volunteer" } });
@@ -24,13 +26,21 @@ try {
   assert.ifError(coordinatorCreateError);
   coordinatorId = coordinatorUser.user.id;
 
+  const { data: platformAdminUser, error: platformAdminCreateError } = await admin.auth.admin.createUser({ email: `admin-${suffix}@example.com`, password, email_confirm: true, user_metadata: { full_name: "Тестовый Администратор", city: "Астана" } });
+  assert.ifError(platformAdminCreateError);
+  platformAdminId = platformAdminUser.user.id;
+
   const { error: coordinatorRoleError } = await admin.from("profiles").update({ role: "coordinator" }).eq("id", coordinatorId);
   assert.ifError(coordinatorRoleError);
+  const { error: adminRoleError } = await admin.from("profiles").update({ role: "admin" }).eq("id", platformAdminId);
+  assert.ifError(adminRoleError);
 
   const { error: volunteerLoginError } = await volunteer.auth.signInWithPassword({ email: `volunteer-${suffix}@example.com`, password });
   const { error: coordinatorLoginError } = await coordinator.auth.signInWithPassword({ email: `coordinator-${suffix}@example.com`, password });
+  const { error: platformAdminLoginError } = await platformAdmin.auth.signInWithPassword({ email: `admin-${suffix}@example.com`, password });
   assert.ifError(volunteerLoginError);
   assert.ifError(coordinatorLoginError);
+  assert.ifError(platformAdminLoginError);
 
   const { data: project, error: projectError } = await coordinator.from("projects").insert({ coordinator_id: coordinatorId, title: "Qamqor smoke test project", description: "Временный проект для проверки полного рабочего цикла платформы Qamqor.", category: "Экология", city: "Алматы", address: "Тестовый адрес", format: "offline", start_date: new Date(Date.now() + 86_400_000).toISOString(), end_date: new Date(Date.now() + 172_800_000).toISOString(), volunteer_hours: 6, required_volunteers: 3, benefits: ["volunteer_hours", "meals"], status: "draft" }).select("id").single();
   assert.ifError(projectError);
@@ -87,8 +97,18 @@ try {
   assert.equal(publicProfile.id, volunteerId);
   assert.equal(Number(publicProfile.confirmed_hours), 6);
 
-  console.log("Supabase smoke test passed: auth, RLS, project CRUD, private WhatsApp access, application, hours, achievement and certificate.");
+  const { error: forbiddenDeleteError } = await coordinator.rpc("admin_delete_volunteer_user", { target_user_id: volunteerId });
+  assert(forbiddenDeleteError, "Coordinator must not delete volunteer accounts");
+
+  const { error: deleteVolunteerError } = await platformAdmin.rpc("admin_delete_volunteer_user", { target_user_id: volunteerId });
+  assert.ifError(deleteVolunteerError);
+  const { data: deletedVolunteer } = await admin.auth.admin.getUserById(volunteerId);
+  assert.equal(deletedVolunteer.user, null, "Administrator deletion must remove the Auth account");
+  volunteerId = undefined;
+
+  console.log("Supabase smoke test passed: auth, roles, RLS, project CRUD, private WhatsApp access, application, hours, achievement, certificate and admin-only volunteer deletion.");
 } finally {
+  if (platformAdminId) await admin.auth.admin.deleteUser(platformAdminId);
   if (coordinatorId) await admin.auth.admin.deleteUser(coordinatorId);
   if (volunteerId) await admin.auth.admin.deleteUser(volunteerId);
 }
