@@ -15,7 +15,6 @@ export function SiteHeaderClient({ signedIn }: { signedIn: boolean }) {
     { href: "/projects", label: copy.nav.projects },
     { href: "/#advantages", label: copy.nav.features },
     { href: "/#activities", label: copy.nav.activities },
-    { href: "/#about", label: copy.nav.about },
   ];
 
   return (

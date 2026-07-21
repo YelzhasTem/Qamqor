@@ -16,6 +16,7 @@ export async function applyToProjectAction(projectId: string): Promise<ActionRes
     if (error.code === "23505") return { success: false, error: "Вы уже подавали заявку на этот проект" };
     return { success: false, error: error.message };
   }
+  revalidatePath("/");
   revalidatePath(`/projects/${projectId}`);
   revalidatePath("/my-projects");
   revalidatePath("/dashboard");
@@ -27,6 +28,7 @@ export async function cancelApplicationAction(applicationId: string, projectId: 
   const supabase = await createClient();
   const { error } = await supabase.from("project_applications").delete().eq("id", applicationId).eq("volunteer_id", profile.id);
   if (error) return { success: false, error: error.message };
+  revalidatePath("/");
   revalidatePath(`/projects/${projectId}`);
   revalidatePath("/my-projects");
   revalidatePath("/dashboard");
@@ -39,6 +41,7 @@ export async function updateApplicationStatusAction(applicationId: string, proje
   const supabase = await createClient();
   const { error } = await supabase.from("project_applications").update({ status }).eq("id", applicationId).eq("project_id", projectId);
   if (error) return { success: false, error: error.message };
+  revalidatePath("/");
   revalidatePath(`/coordinator/projects/${projectId}/applications`);
   revalidatePath(`/projects/${projectId}`);
   revalidatePath("/my-projects");
@@ -59,6 +62,7 @@ export async function saveVolunteerHoursAction(input: { applicationId: string; v
     confirmed_by: profile.id,
   }, { onConflict: "volunteer_id,project_id" });
   if (error) return { success: false, error: error.message };
+  revalidatePath("/");
   revalidatePath(`/coordinator/projects/${input.projectId}/applications`);
   revalidatePath("/dashboard");
   revalidatePath("/profile");

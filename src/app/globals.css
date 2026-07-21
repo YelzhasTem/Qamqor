@@ -552,47 +552,6 @@ select {
   transform: translateY(-0.45rem);
 }
 
-.demo-project-cover {
-  aspect-ratio: 4 / 3;
-  background-image: url("/illustrations/qamqor-activities.png");
-  background-repeat: no-repeat;
-  background-size: 205% 205%;
-  transition: transform 600ms cubic-bezier(.2,.8,.2,1);
-}
-
-.group:hover .demo-project-cover { transform: scale(1.025); }
-.demo-project-cover-0 { background-position: 0 0; }
-.demo-project-cover-1 { background-position: 100% 100%; }
-.demo-project-cover-2 { background-position: 100% 0; }
-
-.impact-panel {
-  display: grid;
-  align-items: center;
-  gap: 3rem;
-  overflow: hidden;
-  border-radius: 3rem;
-  background:
-    radial-gradient(circle at 10% 100%, color-mix(in srgb, var(--primary-foreground) 8%, transparent), transparent 22rem),
-    var(--primary);
-  padding: 2rem 1.5rem;
-  box-shadow: 0 1.8rem 4rem color-mix(in srgb, var(--primary) 18%, transparent);
-}
-
-.journey-card {
-  border: 0.5rem solid color-mix(in srgb, var(--primary-foreground) 18%, transparent);
-  border-radius: 2.3rem;
-  background: var(--surface);
-  padding: 1.25rem;
-  color: var(--foreground);
-  box-shadow: 0 1.8rem 4rem color-mix(in srgb, var(--foreground) 18%, transparent);
-  transform: rotate(1.5deg);
-}
-
-.progress-fill {
-  transform-origin: left;
-  animation: progress-grow 1.4s cubic-bezier(.2,.8,.2,1) both;
-}
-
 .cta-panel {
   position: relative;
   overflow: hidden;
@@ -667,17 +626,10 @@ select {
   50% { transform: scale(1.08) rotate(4deg); }
 }
 
-@keyframes progress-grow {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
 @media (min-width: 768px) {
   .activity-panel { grid-template-columns: 0.82fr 1.18fr; align-items: stretch; }
   .activity-copy { padding: 3.5rem 1rem 3.5rem 3rem; }
   .activity-illustration { min-height: 34rem; padding: 1rem; gap: 1rem; }
-  .impact-panel { grid-template-columns: 1fr 0.92fr; padding: 4rem; }
-  .journey-card { padding: 1.6rem; }
 }
 
 @media (min-width: 1024px) {
@@ -697,8 +649,7 @@ select {
   .hero-heart { display: none; }
   .stats-panel { border-radius: 1.7rem; padding-inline: 0.25rem; }
   .landing-section { padding-block: 4.75rem; }
-  .activity-panel, .impact-panel { border-radius: 2rem; }
-  .journey-card { transform: none; }
+  .activity-panel { border-radius: 2rem; }
   .cta-panel { border-radius: 2.3rem; padding-block: 4rem; }
 }
 
