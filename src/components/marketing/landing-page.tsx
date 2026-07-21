@@ -24,6 +24,7 @@ import { Reveal } from "@/components/marketing/reveal";
 import { useLanguage } from "@/components/marketing/language-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatLocalizedDate, translateValue } from "@/lib/i18n/marketing-copy";
 import type { ProjectWithMeta } from "@/types/app";
 
 type LandingPageProps = {
@@ -193,14 +194,13 @@ export function LandingPage({ stats, projects }: LandingPageProps) {
 
 function LandingProjectCards({ projects }: { projects: ProjectWithMeta[] }) {
   const { locale, copy } = useLanguage();
-  const dateLocale = locale === "kk" ? "kk-KZ" : locale === "en" ? "en-US" : "ru-RU";
   const cards = projects.slice(0, 3).map((project) => ({
     id: project.id,
     title: project.title,
     description: project.description,
-    category: project.category,
-    city: project.city,
-    date: new Intl.DateTimeFormat(dateLocale, { day: "numeric", month: "long" }).format(new Date(project.start_date)),
+    category: translateValue(project.category, copy.categories),
+    city: translateValue(project.city, copy.cities),
+    date: formatLocalizedDate(project.start_date, locale, { day: "numeric", month: "long" }),
     hours: project.volunteer_hours,
     showsHours: project.benefits.includes("volunteer_hours"),
     places: project.availablePlaces ?? project.required_volunteers,

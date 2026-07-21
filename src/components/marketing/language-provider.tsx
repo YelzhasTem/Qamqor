@@ -9,23 +9,40 @@ type LanguageContextValue = {
   copy: (typeof marketingCopy)[Locale];
 };
 
-const LanguageContext = createContext<LanguageContextValue | null>(null);
+const defaultLanguageContext: LanguageContextValue = {
+  locale: "ru",
+  setLocale: () => undefined,
+  copy: marketingCopy.ru,
+};
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("ru");
+const LanguageContext = createContext<LanguageContextValue>(defaultLanguageContext);
+
+function isLocale(value: string | null): value is Locale {
+  return value === "ru" || value === "kk" || value === "en";
+}
+
+function persistLocale(locale: Locale) {
+  window.localStorage.setItem("qamqor-language", locale);
+  document.cookie = `qamqor-language=${locale}; path=/; max-age=31536000; samesite=lax`;
+  document.documentElement.lang = locale;
+}
+
+export function LanguageProvider({ children, initialLocale = "ru" }: { children: React.ReactNode; initialLocale?: Locale }) {
+  const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("qamqor-language");
-    if (saved === "ru" || saved === "kk" || saved === "en") {
+    if (isLocale(saved) && saved !== initialLocale) {
       setLocaleState(saved);
-      document.documentElement.lang = saved;
+      persistLocale(saved);
+    } else {
+      persistLocale(initialLocale);
     }
-  }, []);
+  }, [initialLocale]);
 
   const setLocale = (nextLocale: Locale) => {
     setLocaleState(nextLocale);
-    window.localStorage.setItem("qamqor-language", nextLocale);
-    document.documentElement.lang = nextLocale;
+    persistLocale(nextLocale);
   };
 
   const value = useMemo(() => ({ locale, setLocale, copy: marketingCopy[locale] }), [locale]);
@@ -34,7 +51,5 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (!context) throw new Error("useLanguage must be used inside LanguageProvider");
-  return context;
+  return useContext(LanguageContext);
 }

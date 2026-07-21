@@ -1,3 +1,5 @@
+"use client";
+
 import {
   BusFront,
   Clock3,
@@ -7,9 +9,9 @@ import {
   Utensils,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/marketing/language-provider";
 import {
   isProjectBenefit,
-  projectBenefitLabels,
   type ProjectBenefit,
 } from "@/lib/project-benefits";
 import { cn } from "@/lib/utils";
@@ -32,6 +34,7 @@ export function ProjectBenefits({
   hours: number;
   className?: string;
 }) {
+  const { copy } = useLanguage();
   const knownBenefits = benefits.filter(isProjectBenefit);
   if (!knownBenefits.length) return null;
 
@@ -40,8 +43,8 @@ export function ProjectBenefits({
       {knownBenefits.map((benefit) => {
         const Icon = icons[benefit];
         const label = benefit === "volunteer_hours"
-          ? `${hours} ВЧ`
-          : projectBenefitLabels[benefit];
+          ? `${hours} ${copy.common.hoursShort}`
+          : copy.benefits[benefit];
 
         return (
           <Badge key={benefit} variant="muted" className="gap-1.5 py-1.5">

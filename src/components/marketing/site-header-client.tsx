@@ -41,7 +41,7 @@ export function SiteHeaderClient({ signedIn }: { signedIn: boolean }) {
           )}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="lg:hidden" aria-label="Menu"><Menu /></Button>
+              <Button variant="outline" size="icon" className="lg:hidden" aria-label={copy.common.menu}><Menu /></Button>
             </SheetTrigger>
             <SheetContent className="flex flex-col">
               <Logo />
