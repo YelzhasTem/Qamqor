@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { ShieldCheck, UserCog, UsersRound } from "lucide-react";
+import Link from "next/link";
+import { Search, ShieldCheck, UserCog, UsersRound, X } from "lucide-react";
 import { UserRoleManager } from "@/components/admin/user-role-manager";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { RoleBadges } from "@/components/shared/role-badges";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -13,14 +16,20 @@ import { isCoordinatorRole } from "@/types/roles";
 
 export const metadata: Metadata = { title: "Управление пользователями" };
 
-export default async function AdminUsersPage() {
+export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   await requireRole("admin");
+  const { q } = await searchParams;
+  const query = q?.trim().slice(0, 100) ?? "";
+  const normalizedQuery = query.toLocaleLowerCase("ru-RU");
   const supabase = await createClient();
   const { data: users, error } = await supabase.rpc("admin_list_users");
   if (error) throw new Error("Не удалось загрузить пользователей");
 
   const coordinators = (users ?? []).filter((user) => isCoordinatorRole(user.role)).length;
   const volunteers = (users ?? []).filter((user) => user.role === "volunteer").length;
+  const filteredUsers = normalizedQuery
+    ? (users ?? []).filter((user) => [user.full_name, user.email, user.city ?? ""].some((value) => value.toLocaleLowerCase("ru-RU").includes(normalizedQuery)))
+    : (users ?? []);
 
   return <div>
     <div>
@@ -33,11 +42,20 @@ export default async function AdminUsersPage() {
       <StatCard label="Волонтёров" value={volunteers} icon={UsersRound} tone="success" />
       <StatCard label="Координаторов" value={coordinators} icon={UserCog} tone="info" />
     </div>
+    <form method="get" className="mt-7 flex flex-col gap-3 rounded-2xl border bg-surface p-4 sm:flex-row sm:items-center">
+      <div className="relative min-w-0 flex-1">
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input name="q" defaultValue={query} className="pl-10" placeholder="Поиск по имени, email или городу" aria-label="Поиск пользователей" />
+      </div>
+      <Button type="submit"><Search />Найти</Button>
+      {query ? <Button asChild type="button" variant="outline"><Link href="/admin/users"><X />Сбросить</Link></Button> : null}
+    </form>
+    {query ? <p className="mt-3 text-sm text-muted-foreground">Найдено пользователей: <span className="font-bold text-foreground">{filteredUsers.length}</span></p> : null}
     <Card className="mt-7 overflow-hidden">
       <CardContent className="p-0">
         <Table>
           <TableHeader><TableRow><TableHead>Пользователь</TableHead><TableHead>Город</TableHead><TableHead>Роли</TableHead><TableHead>Регистрация</TableHead><TableHead className="text-right">Действие</TableHead></TableRow></TableHeader>
-          <TableBody>{(users ?? []).map((user) => <TableRow key={user.id}>
+          <TableBody>{filteredUsers.map((user) => <TableRow key={user.id}>
             <TableCell><div className="flex items-center gap-3"><Avatar className="size-10"><AvatarImage src={user.avatar_url ?? undefined} /><AvatarFallback>{initials(user.full_name)}</AvatarFallback></Avatar><div className="min-w-0"><p className="truncate font-bold">{user.full_name}</p><p className="mt-0.5 truncate text-xs text-muted-foreground">{user.email}</p></div></div></TableCell>
             <TableCell>{user.city ?? "—"}</TableCell>
             <TableCell><RoleBadges role={user.role} /></TableCell>
@@ -45,7 +63,7 @@ export default async function AdminUsersPage() {
             <TableCell className="text-right"><UserRoleManager userId={user.id} fullName={user.full_name} role={user.role} /></TableCell>
           </TableRow>)}</TableBody>
         </Table>
-        {!users?.length ? <div className="flex min-h-48 flex-col items-center justify-center p-8 text-center"><ShieldCheck className="size-10 text-primary" /><p className="mt-4 font-bold">Пользователи не найдены</p></div> : null}
+        {!filteredUsers.length ? <div className="flex min-h-48 flex-col items-center justify-center p-8 text-center"><ShieldCheck className="size-10 text-primary" /><p className="mt-4 font-bold">Пользователи не найдены</p>{query ? <p className="mt-2 text-sm text-muted-foreground">Попробуйте изменить запрос или сбросить поиск.</p> : null}</div> : null}
       </CardContent>
     </Card>
   </div>;
