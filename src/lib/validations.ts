@@ -23,7 +23,7 @@ export const registerSchema = z.object({
   phone: kazakhstanPhoneSchema,
   email: z.email("Введите корректный email"),
   password: z.string().min(8, "Минимум 8 символов").max(72),
-  role: z.literal("volunteer"),
+  role: z.enum(["volunteer", "coordinator"], { error: "Выберите роль" }),
 });
 
 export const forgotPasswordSchema = z.object({ email: z.email("Введите корректный email") });

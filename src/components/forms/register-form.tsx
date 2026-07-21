@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { CheckCircle2, Loader2, MailCheck, RefreshCw } from "lucide-react";
+import { CheckCircle2, FolderKanban, HandHeart, Loader2, MailCheck, RefreshCw } from "lucide-react";
 import { z } from "zod";
 import { useLanguage } from "@/components/marketing/language-provider";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ export function RegisterForm() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const credentialsRef = useRef<{ email: string; password: string } | null>(null);
   const signInInProgressRef = useRef(false);
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema), defaultValues: { fullName: "", phone: "+7 ", email: "", password: "", role: "volunteer" } });
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema), defaultValues: { fullName: "", phone: "+7 ", email: "", password: "" } });
 
   const completeRegistration = useCallback(async (): Promise<SignInCheckResult> => {
     const credentials = credentialsRef.current;
@@ -158,7 +158,7 @@ export function RegisterForm() {
     setPendingEmail("");
     setAutoSignInError(undefined);
     setMessage(undefined);
-    reset({ fullName: "", phone: "+7 ", email: "", password: "", role: "volunteer" });
+    reset({ fullName: "", phone: "+7 ", email: "", password: "" });
     setStep("form");
   };
 
@@ -190,7 +190,26 @@ export function RegisterForm() {
   }
 
   return <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-    <input type="hidden" {...register("role")} />
+    <fieldset className="grid gap-2">
+      <legend className="text-sm font-medium leading-none">{copy.auth.roleLabel}</legend>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="cursor-pointer">
+          <input type="radio" value="volunteer" {...register("role")} className="peer sr-only" />
+          <span className="flex h-full gap-3 rounded-2xl border bg-surface p-4 transition hover:border-primary/40 peer-checked:border-primary peer-checked:bg-primary/5 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><HandHeart className="size-5" /></span>
+            <span><span className="block text-sm font-black text-foreground">{copy.auth.volunteerRole}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{copy.auth.volunteerRoleDescription}</span></span>
+          </span>
+        </label>
+        <label className="cursor-pointer">
+          <input type="radio" value="coordinator" {...register("role")} className="peer sr-only" />
+          <span className="flex h-full gap-3 rounded-2xl border bg-surface p-4 transition hover:border-primary/40 peer-checked:border-primary peer-checked:bg-primary/5 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><FolderKanban className="size-5" /></span>
+            <span><span className="block text-sm font-black text-foreground">{copy.auth.coordinatorRole}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{copy.auth.coordinatorRoleDescription}</span></span>
+          </span>
+        </label>
+      </div>
+      <p className="text-xs text-danger-foreground">{translateValue(errors.role?.message ?? "", copy.auth.validation)}</p>
+    </fieldset>
     <div className="grid gap-2"><Label htmlFor="fullName">{copy.auth.fullName}</Label><Input id="fullName" autoComplete="name" placeholder={copy.auth.fullNamePlaceholder} {...register("fullName")} /><p className="text-xs text-danger-foreground">{translateValue(errors.fullName?.message ?? "", copy.auth.validation)}</p></div>
     <div className="grid gap-2"><Label htmlFor="phone">{copy.auth.phone}</Label><Input id="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+7 700 123 45 67" {...register("phone")} /><p className="text-xs text-danger-foreground">{translateValue(errors.phone?.message ?? "", copy.auth.validation)}</p></div>
     <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...register("email")} /><p className="text-xs text-danger-foreground">{translateValue(errors.email?.message ?? "", copy.auth.validation)}</p></div>
