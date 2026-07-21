@@ -18,16 +18,27 @@ export function formatLocalizedDate(
   options: Intl.DateTimeFormatOptions,
 ) {
   const date = new Date(value);
-  if (locale !== "kk") return new Intl.DateTimeFormat(localeTags[locale], options).format(date);
+  const timeZone = "Asia/Almaty";
+  if (locale !== "kk") return new Intl.DateTimeFormat(localeTags[locale], { ...options, timeZone }).format(date);
 
   const longMonths = ["қаңтар", "ақпан", "наурыз", "сәуір", "мамыр", "маусым", "шілде", "тамыз", "қыркүйек", "қазан", "қараша", "желтоқсан"];
   const shortMonths = ["қаң.", "ақп.", "нау.", "сәу.", "мам.", "мау.", "шіл.", "там.", "қыр.", "қаз.", "қар.", "жел."];
+  const rawParts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const parts = Object.fromEntries(rawParts.map((part) => [part.type, part.value]));
   const dateParts: string[] = [];
-  if (options.day) dateParts.push(String(date.getDate()));
-  if (options.month) dateParts.push((options.month === "short" ? shortMonths : longMonths)[date.getMonth()]);
-  if (options.year) dateParts.push(`${date.getFullYear()} ж.`);
+  if (options.day) dateParts.push(parts.day);
+  if (options.month) dateParts.push((options.month === "short" ? shortMonths : longMonths)[Number(parts.month) - 1]);
+  if (options.year) dateParts.push(`${parts.year} ж.`);
   const time = options.hour || options.minute
-    ? `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`
+    ? `${parts.hour}:${parts.minute}`
     : "";
   return [dateParts.join(" "), time].filter(Boolean).join(", ");
 }
