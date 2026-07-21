@@ -5,7 +5,7 @@ import { requireRole } from "@/lib/auth";
 export const metadata: Metadata = { title: "Создание проекта" };
 
 export default async function NewProjectPage() {
-  const profile = await requireRole("coordinator");
+  await requireRole("coordinator");
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -14,7 +14,7 @@ export default async function NewProjectPage() {
       <p className="mt-2 text-sm leading-6 text-muted-foreground">
         Заполните информацию, выберите, что получат волонтёры, и сохраните проект как черновик или опубликуйте сразу.
       </p>
-      <div className="mt-7"><ProjectForm defaultCity={profile.city ?? ""} /></div>
+      <div className="mt-7"><ProjectForm /></div>
     </div>
   );
 }

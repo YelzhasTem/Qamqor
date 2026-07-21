@@ -28,7 +28,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   const coordinators = (users ?? []).filter((user) => isCoordinatorRole(user.role)).length;
   const volunteers = (users ?? []).filter((user) => user.role === "volunteer").length;
   const filteredUsers = normalizedQuery
-    ? (users ?? []).filter((user) => [user.full_name, user.email, user.city ?? ""].some((value) => value.toLocaleLowerCase("ru-RU").includes(normalizedQuery)))
+    ? (users ?? []).filter((user) => [user.full_name, user.email].some((value) => value.toLocaleLowerCase("ru-RU").includes(normalizedQuery)))
     : (users ?? []);
 
   return <div>
@@ -45,7 +45,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
     <form method="get" className="mt-7 flex flex-col gap-3 rounded-2xl border bg-surface p-4 sm:flex-row sm:items-center">
       <div className="relative min-w-0 flex-1">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input name="q" defaultValue={query} className="pl-10" placeholder="Поиск по имени, email или городу" aria-label="Поиск пользователей" />
+        <Input name="q" defaultValue={query} className="pl-10" placeholder="Поиск по имени или email" aria-label="Поиск пользователей" />
       </div>
       <Button type="submit"><Search />Найти</Button>
       {query ? <Button asChild type="button" variant="outline"><Link href="/admin/users"><X />Сбросить</Link></Button> : null}
@@ -54,10 +54,9 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
     <Card className="mt-7 overflow-hidden">
       <CardContent className="p-0">
         <Table>
-          <TableHeader><TableRow><TableHead>Пользователь</TableHead><TableHead>Город</TableHead><TableHead>Роли</TableHead><TableHead>Регистрация</TableHead><TableHead className="text-right">Действие</TableHead></TableRow></TableHeader>
+          <TableHeader><TableRow><TableHead>Пользователь</TableHead><TableHead>Роли</TableHead><TableHead>Регистрация</TableHead><TableHead className="text-right">Действие</TableHead></TableRow></TableHeader>
           <TableBody>{filteredUsers.map((user) => <TableRow key={user.id}>
             <TableCell><div className="flex items-center gap-3"><Avatar className="size-10"><AvatarImage src={user.avatar_url ?? undefined} /><AvatarFallback>{initials(user.full_name)}</AvatarFallback></Avatar><div className="min-w-0"><p className="truncate font-bold">{user.full_name}</p><p className="mt-0.5 truncate text-xs text-muted-foreground">{user.email}</p></div></div></TableCell>
-            <TableCell>{user.city ?? "—"}</TableCell>
             <TableCell><RoleBadges role={user.role} /></TableCell>
             <TableCell className="whitespace-nowrap text-muted-foreground">{formatDate(user.created_at, "d MMM yyyy")}</TableCell>
             <TableCell className="text-right"><UserRoleManager userId={user.id} fullName={user.full_name} role={user.role} /></TableCell>

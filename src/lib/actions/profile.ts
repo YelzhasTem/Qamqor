@@ -14,7 +14,6 @@ export async function updateProfileAction(input: unknown): Promise<ActionResult>
   const supabase = await createClient();
   const { error } = await supabase.from("profiles").update({
     full_name: parsed.data.full_name,
-    city: parsed.data.city || null,
     phone: parsed.data.phone || null,
     bio: parsed.data.bio || null,
   }).eq("id", user.id);

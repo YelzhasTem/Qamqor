@@ -29,7 +29,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="md:pl-68">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-surface/90 px-4 backdrop-blur md:px-8">
           <MobileDashboardNav role={profile.role} />
-          <div className="ml-auto flex items-center gap-3"><span className="hidden text-sm text-muted-foreground sm:block">{profile.city || "Город не указан"}</span><Avatar className="size-9"><AvatarImage src={profile.avatar_url ?? undefined} alt={profile.full_name} /><AvatarFallback>{initials(profile.full_name)}</AvatarFallback></Avatar></div>
+          <div className="ml-auto flex items-center gap-3"><span className="hidden text-sm text-muted-foreground sm:block">{profile.full_name}</span><Avatar className="size-9"><AvatarImage src={profile.avatar_url ?? undefined} alt={profile.full_name} /><AvatarFallback>{initials(profile.full_name)}</AvatarFallback></Avatar></div>
         </header>
         <main className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
