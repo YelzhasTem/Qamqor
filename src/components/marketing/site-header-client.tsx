@@ -10,17 +10,18 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/s
 
 export function SiteHeaderClient({ signedIn }: { signedIn: boolean }) {
   const { copy } = useLanguage();
+  const landingHref = signedIn ? "/landing" : "/";
 
   const links = [
     { href: "/projects", label: copy.nav.projects },
-    { href: "/#advantages", label: copy.nav.features },
-    { href: "/#activities", label: copy.nav.activities },
+    { href: `${landingHref}#advantages`, label: copy.nav.features },
+    { href: `${landingHref}#activities`, label: copy.nav.activities },
   ];
 
   return (
     <header className="marketing-header">
       <div className="page-shell flex h-20 items-center justify-between gap-4">
-        <Logo />
+        <Logo href={landingHref} />
         <nav className="hidden items-center gap-1 rounded-full border bg-surface/75 p-1.5 shadow-sm backdrop-blur-xl lg:flex" aria-label={copy.nav.about}>
           {links.map((link) => (
             <Link key={link.href} href={link.href} className="rounded-full px-4 py-2 text-sm font-bold text-muted-foreground transition hover:bg-primary/7 hover:text-primary">
@@ -44,7 +45,7 @@ export function SiteHeaderClient({ signedIn }: { signedIn: boolean }) {
               <Button variant="outline" size="icon" className="lg:hidden" aria-label={copy.common.menu}><Menu /></Button>
             </SheetTrigger>
             <SheetContent className="flex flex-col">
-              <Logo />
+              <Logo href={landingHref} />
               <div className="mt-8 sm:hidden"><LanguageSwitcher /></div>
               <nav className="mt-8 grid gap-2">
                 {links.map((link) => (

@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-background">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-68 border-r bg-surface p-5 md:flex md:flex-col">
-        <Logo />
+        <Logo href="/landing" />
         <div className="mt-10"><DashboardNav role={profile.role} /></div>
         <div className="mt-auto border-t pt-5">
           <div className="flex items-center gap-3 px-2">
