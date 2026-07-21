@@ -35,7 +35,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
     <div>
       <p className="text-sm font-bold text-primary">Администрирование</p>
       <h1 className="mt-1 text-3xl font-black tracking-tight">Пользователи и роли</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Назначайте координаторов среди зарегистрированных пользователей. Роль администратора через этот раздел не выдаётся.</p>
+      <p className="mt-2 text-sm text-muted-foreground">Назначайте координаторов и удаляйте аккаунты волонтёров. Роль администратора через этот раздел не выдаётся.</p>
     </div>
     <div className="mt-7 grid gap-4 sm:grid-cols-3">
       <StatCard label="Всего пользователей" value={users?.length ?? 0} icon={UsersRound} />

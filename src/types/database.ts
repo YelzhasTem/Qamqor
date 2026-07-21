@@ -602,6 +602,10 @@ export type Database = {
       }
     }
     Functions: {
+      admin_delete_volunteer_user: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       admin_list_users: {
         Args: Record<PropertyKey, never>
         Returns: {
