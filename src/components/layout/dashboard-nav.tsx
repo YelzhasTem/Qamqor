@@ -7,15 +7,15 @@ import { cn } from "@/lib/utils";
 import { isCoordinatorRole, type UserRole } from "@/types/roles";
 
 const volunteerLinks = [
-  { href: "/dashboard", label: "Дашборд", icon: Gauge },
+  { href: "/dashboard", label: "Актуальные проекты", icon: Gauge },
   { href: "/cabinet", label: "Кабинет", icon: UserRound },
-  { href: "/my-projects", label: "Мои проекты", icon: FolderKanban },
+  { href: "/my-projects", label: "Моё участие", icon: FolderKanban },
   { href: "/profile", label: "Профиль и награды", icon: Award },
 ];
 const coordinatorLinks = [
-  { href: "/dashboard", label: "Дашборд", icon: Gauge },
+  { href: "/dashboard", label: "Актуальные проекты", icon: Gauge },
   { href: "/cabinet", label: "Кабинет", icon: UserRound },
-  { href: "/coordinator/projects", label: "Мои проекты", icon: FolderKanban },
+  { href: "/coordinator/projects", label: "Управление проектами", icon: FolderKanban },
   { href: "/coordinator/projects/new", label: "Создать проект", icon: PlusCircle },
   { href: "/profile", label: "Профиль", icon: UserRound },
 ];

@@ -12,7 +12,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
 import type { Project, ProjectApplication, ProjectWhatsAppGroup, VolunteerHours } from "@/types/app";
 
-export const metadata: Metadata = { title: "Мои проекты" };
+export const metadata: Metadata = { title: "Моё участие" };
 
 export default async function MyProjectsPage() {
   const profile = await requireRole("volunteer");
@@ -33,8 +33,8 @@ export default async function MyProjectsPage() {
 
   return (
     <div>
-      <p className="text-sm font-bold text-primary">Моя активность</p>
-      <h1 className="mt-1 text-3xl font-black tracking-tight">Мои проекты</h1>
+      <p className="text-sm font-bold text-primary">Волонтёрская активность</p>
+      <h1 className="mt-1 text-3xl font-black tracking-tight">Моё участие</h1>
       <p className="mt-2 text-sm text-muted-foreground">Следите за заявками, активными событиями и завершёнными проектами.</p>
       <Tabs defaultValue="applications" className="mt-8">
         <TabsList className="w-full justify-start overflow-x-auto sm:w-auto">
