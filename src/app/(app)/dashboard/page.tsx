@@ -8,7 +8,7 @@ import { getCurrentProfile } from "@/lib/auth";
 import { getDashboardProjects } from "@/lib/queries/projects";
 import { isCoordinatorRole } from "@/types/roles";
 
-export const metadata: Metadata = { title: "Дашборд проектов" };
+export const metadata: Metadata = { title: "Актуальные проекты" };
 
 export default async function DashboardPage() {
   const [profile, projects] = await Promise.all([getCurrentProfile(), getDashboardProjects()]);
@@ -18,10 +18,10 @@ export default async function DashboardPage() {
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm font-bold text-primary">Дашборд</p>
-          <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">Проекты Qamqor</h1>
+          <p className="text-sm font-bold text-primary">Qamqor</p>
+          <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">Актуальные проекты</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Все опубликованные проекты в одной ленте. Просматривайте список и открывайте подробности интересующих инициатив.
+            Все действующие опубликованные проекты в одной ленте. Выбирайте инициативу и присоединяйтесь к команде.
           </p>
         </div>
         {canCreate ? (
