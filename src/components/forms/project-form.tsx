@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,13 +19,13 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import { FormMessage } from "@/components/shared/form-message";
+import { ProjectCover } from "@/components/projects/project-cover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createProjectAction, saveProjectAction } from "@/lib/actions/projects";
 import {
-  DEFAULT_PROJECT_COVER,
   isProjectBenefit,
   projectBenefitLabels,
   type ProjectBenefit,
@@ -73,7 +72,7 @@ function toProjectCity(value?: string | null) {
 export function ProjectForm({ project, defaultCity = "", whatsappGroupUrl = "" }: { project?: Project; defaultCity?: string; whatsappGroupUrl?: string }) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
-  const [preview, setPreview] = useState(project?.cover_url || DEFAULT_PROJECT_COVER);
+  const [preview, setPreview] = useState<string | null>(project?.cover_url ?? null);
   const [message, setMessage] = useState<string>();
   const existingBenefits = project?.benefits.filter(isProjectBenefit) ?? ["volunteer_hours"];
   const {
@@ -162,11 +161,11 @@ export function ProjectForm({ project, defaultCity = "", whatsappGroupUrl = "" }
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="group relative flex aspect-[16/7] w-full items-center justify-center overflow-hidden rounded-2xl border bg-primary/5 text-primary transition hover:border-primary"
+          className="group relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-2xl border bg-primary/5 text-primary transition hover:border-primary"
         >
-          <Image src={preview} alt="Обложка проекта" fill sizes="(max-width: 1024px) 100vw, 896px" className="object-cover" />
+          <ProjectCover src={preview} title="Предпросмотр обложки проекта" className="absolute inset-0" />
           <span className="absolute inset-x-4 bottom-4 flex items-center justify-center gap-2 rounded-xl bg-surface/90 px-4 py-3 text-sm font-bold shadow-lg backdrop-blur transition group-hover:bg-surface">
-            <ImagePlus className="size-5" />{project?.cover_url ? "Заменить фотографию" : "Добавить свою фотографию"}
+            <ImagePlus className="size-5" />{preview ? "Заменить фотографию" : "Добавить свою фотографию"}
           </span>
         </button>
         <input
@@ -180,7 +179,7 @@ export function ProjectForm({ project, defaultCity = "", whatsappGroupUrl = "" }
           }}
         />
         <p className="text-xs leading-5 text-muted-foreground">
-          Фотография необязательна. Без неё Qamqor автоматически использует общую иллюстрацию. JPG, PNG или WebP · до 5 МБ.
+          Предпросмотр соответствует формату карточки «Актуальных проектов», а фотография показывается целиком. Рекомендуем пропорцию 16:9. JPG, PNG или WebP · до 5 МБ.
         </p>
       </CardSection>
 
