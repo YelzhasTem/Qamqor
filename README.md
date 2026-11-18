@@ -117,40 +117,17 @@ flowchart LR
 
 ## Getting started
 
-**Requirements:** Node.js 20+, npm, a Supabase project and the [Supabase CLI](https://supabase.com/docs/guides/cli).
+The whole product runs locally on a Supabase stack in Docker with invented demo data:
 
 ```bash
-# 1. Install dependencies
-npm install
-
-# 2. Create your local environment file and add your Supabase URL and anon key
-cp .env.example .env.local
-
-# 3. Apply migrations and seed data
-supabase link --project-ref YOUR_PROJECT_REF
-supabase db push --include-seed
-
-# 4. Start the dev server
+npm ci
+npm run db:start
+npm run demo:reset
+cp .env.local.example .env.local   # add the local anon key from `npx supabase status`
 npm run dev
 ```
 
-Then open [localhost:3000](http://localhost:3000).
-
-| Variable | Required | Description |
-| --- | :---: | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Browser-safe publishable (anon) key |
-| `NEXT_PUBLIC_APP_URL` | Recommended | Public URL of the app |
-
-### Scripts
-
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Start the dev server with Turbopack |
-| `npm run build` | Production build |
-| `npm run typecheck` | TypeScript check |
-| `npm run lint` | ESLint with zero warnings allowed |
-| `npm run test:supabase` | End-to-end smoke test of the RLS workflow on temporary users (needs `SUPABASE_SERVICE_ROLE_KEY`) |
+Prerequisites, every npm script, demo accounts, local e-mails and how to make a platform admin are in [docs/LOCAL.md](docs/LOCAL.md).
 
 ### Deployment
 

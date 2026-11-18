@@ -93,25 +93,3 @@ revoke all on function public.admin_list_users() from public, anon;
 revoke all on function public.admin_set_user_role(uuid, public.user_role) from public, anon;
 grant execute on function public.admin_list_users() to authenticated;
 grant execute on function public.admin_set_user_role(uuid, public.user_role) to authenticated;
-
--- Bootstrap the first administrator. Public registration still always creates
--- volunteer profiles through public.handle_new_user().
-update public.profiles p
-set role = 'admin', updated_at = now()
-from auth.users u
-where p.id = u.id
-  and lower(u.email) = 'okok0000m@gmail.com';
-
-do $$
-begin
-  if not exists (
-    select 1
-    from public.profiles p
-    join auth.users u on u.id = p.id
-    where lower(u.email) = 'okok0000m@gmail.com'
-      and p.role = 'admin'
-  ) then
-    raise exception 'Bootstrap administrator profile was not found';
-  end if;
-end;
-$$;
