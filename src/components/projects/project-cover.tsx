@@ -1,20 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useLanguage } from "@/components/marketing/language-provider";
-import { DEFAULT_PROJECT_COVER } from "@/lib/project-benefits";
+import { PhotoPlaceholder } from "@/components/shared/photo-placeholder";
 import { cn } from "@/lib/utils";
 
+/** Project cover image, or a neutral striped placeholder when there is none. */
 export function ProjectCover({ src, title, className, priority = false }: { src?: string | null; title: string; className?: string; priority?: boolean }) {
-  const { copy } = useLanguage();
-  const imageSrc = src || DEFAULT_PROJECT_COVER;
-  const alt = src ? title : copy.common.defaultProjectImageAlt;
-
-  return <div className={cn("relative overflow-hidden bg-primary/10", className)}>
+  return <div className={cn("relative overflow-hidden bg-inset", className)}>
     {src ? <>
-      <Image src={imageSrc} alt="" fill priority={priority} sizes="(max-width: 768px) 100vw, 50vw" aria-hidden className="scale-110 object-cover opacity-25 blur-2xl" />
-      <div className="absolute inset-0 bg-surface/20" aria-hidden />
-      <Image src={imageSrc} alt={alt} fill priority={priority} sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" />
-    </> : <Image src={imageSrc} alt={alt} fill priority={priority} sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition duration-500 group-hover:scale-[1.03]" />}
+      <Image src={src} alt="" fill priority={priority} sizes="(max-width: 768px) 100vw, 50vw" aria-hidden className="scale-110 object-cover opacity-25 blur-2xl" />
+      <Image src={src} alt={title} fill priority={priority} sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" />
+    </> : <PhotoPlaceholder className="absolute inset-0" />}
   </div>;
 }

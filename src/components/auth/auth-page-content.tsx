@@ -1,35 +1,85 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, MonitorCheck } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { ForgotPasswordForm } from "@/components/forms/forgot-password-form";
 import { LoginForm } from "@/components/forms/login-form";
 import { RegisterForm } from "@/components/forms/register-form";
 import { ResetPasswordForm } from "@/components/forms/reset-password-form";
-import { useLanguage } from "@/components/marketing/language-provider";
+import { useLanguage } from "@/components/i18n/language-provider";
 import { Button } from "@/components/ui/button";
 
-export function LoginPageContent({ next }: { next?: string }) {
-  const { copy } = useLanguage();
-  return <div className="w-full"><p className="text-sm font-bold text-primary">{copy.auth.loginEyebrow}</p><h1 className="mt-2 text-3xl font-black tracking-tight">{copy.auth.loginTitle}</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.auth.loginDescription}</p><div className="mt-8"><LoginForm next={next} /></div><p className="mt-7 text-center text-sm text-muted-foreground">{copy.auth.noAccount} <Link href="/auth/register" className="font-bold text-primary hover:underline">{copy.auth.registerLink}</Link></p></div>;
+function AuthHeading({ title, description }: { title: string; description?: string }) {
+  return (
+    <div className="mb-6">
+      <h1 className="text-[26px] leading-tight font-extrabold tracking-tight">{title}</h1>
+      {description ? <p className="mt-2 text-[15px] leading-6 text-ink-secondary">{description}</p> : null}
+    </div>
+  );
+}
+
+function SecondaryLinks({ children }: { children: React.ReactNode }) {
+  return <div className="mt-6 flex flex-col items-center gap-1 border-t border-hairline pt-5 text-center text-[15px] text-ink-secondary">{children}</div>;
+}
+
+const linkClass = "inline-flex min-h-11 items-center font-semibold text-ink underline decoration-control underline-offset-4 hover:decoration-ink";
+
+export function LoginPageContent({ next, callbackError }: { next?: string; callbackError?: boolean }) {
+  const { t } = useLanguage();
+  return (
+    <>
+      <AuthHeading title={t.auth.loginTitle} description={t.auth.loginDescription} />
+      <LoginForm next={next} initialError={callbackError ? t.auth.errors.callback : undefined} />
+      <SecondaryLinks>
+        <span>{t.auth.noAccount} <Link href={next ? `/auth/register?next=${encodeURIComponent(next)}` : "/auth/register"} className={linkClass}>{t.auth.registerLink}</Link></span>
+      </SecondaryLinks>
+    </>
+  );
 }
 
 export function RegisterPageContent() {
-  const { copy } = useLanguage();
-  return <div className="w-full"><p className="text-sm font-bold text-primary">{copy.auth.registerEyebrow}</p><h1 className="mt-2 text-3xl font-black tracking-tight">{copy.auth.registerTitle}</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.auth.registerDescription}</p><div className="mt-7"><RegisterForm /></div><p className="mt-6 text-center text-sm text-muted-foreground">{copy.auth.hasAccount} <Link href="/auth/login" className="font-bold text-primary hover:underline">{copy.auth.login}</Link></p></div>;
+  const { t } = useLanguage();
+  return (
+    <>
+      <AuthHeading title={t.auth.registerTitle} description={t.auth.registerDescription} />
+      <RegisterForm />
+      <SecondaryLinks>
+        <span>{t.auth.hasAccount} <Link href="/auth/login" className={linkClass}>{t.auth.login}</Link></span>
+      </SecondaryLinks>
+    </>
+  );
 }
 
 export function ForgotPasswordPageContent() {
-  const { copy } = useLanguage();
-  return <div className="w-full"><p className="text-sm font-bold text-primary">{copy.auth.recoveryEyebrow}</p><h1 className="mt-2 text-3xl font-black tracking-tight">{copy.auth.recoveryTitle}</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.auth.recoveryDescription}</p><div className="mt-8"><ForgotPasswordForm /></div><p className="mt-7 text-center text-sm"><Link href="/auth/login" className="font-bold text-primary hover:underline">{copy.auth.backToLogin}</Link></p></div>;
+  const { t } = useLanguage();
+  return (
+    <>
+      <AuthHeading title={t.auth.recoveryTitle} description={t.auth.recoveryDescription} />
+      <ForgotPasswordForm />
+      <SecondaryLinks><Link href="/auth/login" className={linkClass}>{t.auth.backToLogin}</Link></SecondaryLinks>
+    </>
+  );
 }
 
 export function ResetPasswordPageContent() {
-  const { copy } = useLanguage();
-  return <div className="w-full"><p className="text-sm font-bold text-primary">{copy.auth.security}</p><h1 className="mt-2 text-3xl font-black tracking-tight">{copy.auth.newPasswordTitle}</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.auth.newPasswordDescription}</p><div className="mt-8"><ResetPasswordForm /></div></div>;
+  const { t } = useLanguage();
+  return (
+    <>
+      <AuthHeading title={t.auth.newPasswordTitle} description={t.auth.newPasswordDescription} />
+      <ResetPasswordForm />
+    </>
+  );
 }
 
 export function ConfirmedPageContent() {
-  const { copy } = useLanguage();
-  return <div className="w-full text-center"><div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-success/10 text-success"><CheckCircle2 className="size-8" /></div><p className="mt-6 text-sm font-bold text-success">{copy.auth.confirmedEyebrow}</p><h1 className="mt-2 text-3xl font-black tracking-tight">{copy.auth.confirmedTitle}</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.auth.confirmedDescription}</p><div className="mt-6 flex items-start gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4 text-left"><MonitorCheck className="mt-0.5 size-5 shrink-0 text-primary" /><p className="text-sm leading-6 text-foreground">{copy.auth.confirmedNotice}</p></div><Button asChild variant="outline" className="mt-7 w-full"><Link href="/">{copy.auth.homeQamqor}</Link></Button></div>;
+  const { t } = useLanguage();
+  return (
+    <div className="text-center">
+      <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-positive text-positive-foreground"><CheckCircle2 aria-hidden="true" className="size-7" /></div>
+      <h1 className="mt-5 text-[26px] leading-tight font-extrabold tracking-tight">{t.auth.confirmedTitle}</h1>
+      <p className="mt-2 text-[15px] leading-6 text-ink-secondary">{t.auth.confirmedDescription}</p>
+      <p className="mt-4 rounded-row bg-inset px-4 py-3 text-left text-sm leading-5 text-ink-muted">{t.auth.confirmedNotice}</p>
+      <Button asChild variant="secondary" className="mt-6 w-full"><Link href="/">{t.auth.backHome}</Link></Button>
+    </div>
+  );
 }

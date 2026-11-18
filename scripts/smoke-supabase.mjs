@@ -1,10 +1,9 @@
 import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-assert(url && anonKey && serviceKey, "Supabase smoke-test environment is incomplete");
+import { getLocalSupabaseConfig } from "./lib/local-supabase.mjs";
+
+const { url, anonKey, serviceKey } = getLocalSupabaseConfig();
 
 const options = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
 const admin = createClient(url, serviceKey, options);

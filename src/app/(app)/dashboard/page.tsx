@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { getCurrentProfile } from "@/lib/auth";
 import { getDashboardProjects } from "@/lib/queries/projects";
 import { isCoordinatorRole } from "@/types/roles";
+import { brand } from "@/config/brand";
 
 export const metadata: Metadata = { title: "Актуальные проекты" };
 
@@ -18,7 +19,7 @@ export default async function DashboardPage() {
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm font-bold text-primary">Qamqor</p>
+          <p className="text-sm font-bold text-primary">{brand.name}</p>
           <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">Актуальные проекты</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
             Все действующие опубликованные проекты в одной ленте. Выбирайте инициативу и присоединяйтесь к команде.

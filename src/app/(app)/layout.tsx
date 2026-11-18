@@ -13,6 +13,8 @@ import { redirect } from "next/navigation";
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/auth/login");
+  // Users who have not finished onboarding pick organizations first.
+  if (!profile.onboarded_at) redirect("/organizations");
   return (
     <div className="min-h-screen bg-background">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-68 border-r bg-surface p-5 md:flex md:flex-col">

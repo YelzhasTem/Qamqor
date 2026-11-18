@@ -5,16 +5,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { CheckCircle2, FolderKanban, HandHeart, Loader2, MailCheck, RefreshCw } from "lucide-react";
+import { CheckCircle2, Loader2, MailCheck, RefreshCw } from "lucide-react";
 import { z } from "zod";
-import { useLanguage } from "@/components/marketing/language-provider";
+import { useLanguage } from "@/components/i18n/language-provider";
+import { FormField, fieldA11y } from "@/components/forms/form-field";
+import { FormMessage } from "@/components/shared/form-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { FormMessage } from "@/components/shared/form-message";
-import { normalizeKazakhstanPhone, registerSchema } from "@/lib/validations";
+import { authErrorText, validationText } from "@/lib/auth-errors";
+import { fill } from "@/lib/i18n/format";
+import { ORGANIZATION_PICKER_PATH } from "@/lib/onboarding";
 import { createClient } from "@/lib/supabase/client";
-import { translateValue } from "@/lib/i18n/marketing-copy";
+import { normalizeKazakhstanPhone, registerSchema } from "@/lib/validations";
 
 type RegisterValues = z.infer<typeof registerSchema>;
 type RegistrationStep = "form" | "waiting" | "finishing";
@@ -27,7 +29,7 @@ const AUTO_CHECK_TIMEOUT = 10 * 60_000;
 
 export function RegisterForm() {
   const router = useRouter();
-  const { copy } = useLanguage();
+  const { t } = useLanguage();
   const [message, setMessage] = useState<{ text: string; type: "error" | "success" }>();
   const [step, setStep] = useState<RegistrationStep>("form");
   const [pendingEmail, setPendingEmail] = useState("");
@@ -49,7 +51,7 @@ export function RegisterForm() {
       credentialsRef.current = null;
       setAutoSignInError(undefined);
       setStep("finishing");
-      router.replace("/dashboard");
+      router.replace(ORGANIZATION_PICKER_PATH);
       router.refresh();
       return "success";
     }
@@ -64,9 +66,9 @@ export function RegisterForm() {
       return "retry";
     }
 
-    setAutoSignInError(copy.auth.autoLoginError);
+    setAutoSignInError(t.auth.autoLoginError);
     return "stopped";
-  }, [copy.auth.autoLoginError, router]);
+  }, [t.auth.autoLoginError, router]);
 
   useEffect(() => {
     if (step !== "waiting") return;
@@ -87,7 +89,7 @@ export function RegisterForm() {
 
       const elapsed = Date.now() - startedAt;
       if (elapsed >= AUTO_CHECK_TIMEOUT) {
-        setAutoSignInError(copy.auth.waitTimeout);
+        setAutoSignInError(t.auth.waitTimeout);
         return;
       }
 
@@ -111,7 +113,7 @@ export function RegisterForm() {
       window.removeEventListener("focus", checkWhenActive);
       document.removeEventListener("visibilitychange", checkWhenActive);
     };
-  }, [completeRegistration, copy.auth.waitTimeout, step]);
+  }, [completeRegistration, t.auth.waitTimeout, step]);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -126,9 +128,9 @@ export function RegisterForm() {
   const onSubmit = async (values: RegisterValues) => {
     setMessage(undefined);
     const origin = window.location.origin;
-    const { data, error } = await createClient().auth.signUp({ email: values.email, password: values.password, options: { emailRedirectTo: `${origin}/auth/callback`, data: { full_name: values.fullName, phone: normalizeKazakhstanPhone(values.phone), role: values.role } } });
-    if (error) return setMessage({ text: error.message, type: "error" });
-    if (data.session) { router.push("/dashboard"); router.refresh(); return; }
+    const { data, error } = await createClient().auth.signUp({ email: values.email, password: values.password, options: { emailRedirectTo: `${origin}/auth/callback`, data: { full_name: values.fullName, phone: normalizeKazakhstanPhone(values.phone) } } });
+    if (error) return setMessage({ text: authErrorText(error, t), type: "error" });
+    if (data.session) { router.push(ORGANIZATION_PICKER_PATH); router.refresh(); return; }
 
     credentialsRef.current = { email: values.email, password: values.password };
     setPendingEmail(values.email);
@@ -146,11 +148,11 @@ export function RegisterForm() {
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
     if (error) {
-      setMessage({ text: error.message, type: "error" });
+      setMessage({ text: authErrorText(error, t), type: "error" });
       return;
     }
     setResendCooldown(60);
-    setMessage({ text: copy.auth.newEmailSent, type: "success" });
+    setMessage({ text: t.auth.newEmailSent, type: "success" });
   };
 
   const changeEmail = () => {
@@ -163,58 +165,51 @@ export function RegisterForm() {
   };
 
   if (step !== "form") {
-    return <div className="grid gap-5 text-center">
-      <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-        {step === "finishing" ? <CheckCircle2 className="size-8" /> : <MailCheck className="size-8" />}
+    return <div className="grid gap-5 text-center" aria-live="polite">
+      <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-inset text-ink">
+        {step === "finishing" ? <CheckCircle2 aria-hidden="true" className="size-7" /> : <MailCheck aria-hidden="true" className="size-7" />}
       </div>
       <div>
-        <h2 className="text-xl font-black tracking-tight">{step === "finishing" ? copy.auth.emailConfirmed : copy.auth.confirmEmail}</h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">{copy.auth.emailSentTo} <strong className="font-bold text-foreground">{pendingEmail}</strong></p>
+        <h2 className="text-xl font-extrabold tracking-tight">{step === "finishing" ? t.auth.emailConfirmed : t.auth.confirmEmail}</h2>
+        <p className="mt-2 text-[15px] leading-6 text-ink-secondary">{t.auth.emailSentTo} <strong className="font-semibold break-all text-ink">{pendingEmail}</strong></p>
       </div>
-      <div className="rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4 text-left">
-        <div className="flex items-center gap-3 text-sm font-bold text-foreground">
-          <Loader2 className="size-5 shrink-0 animate-spin text-primary" />
-          {step === "finishing" ? copy.auth.openingAccount : copy.auth.waitingConfirmation}
+      <div className="rounded-row bg-inset px-4 py-4 text-left">
+        <div className="flex items-center gap-3 text-sm font-semibold text-ink">
+          <Loader2 aria-hidden="true" className="size-5 shrink-0 animate-spin" />
+          {step === "finishing" ? t.auth.openingAccount : t.auth.waitingConfirmation}
         </div>
-        <p className="mt-2 pl-8 text-xs leading-5 text-muted-foreground">{copy.auth.confirmationInstruction}</p>
+        <p className="mt-2 pl-8 text-sm leading-5 text-ink-muted">{t.auth.confirmationInstruction}</p>
       </div>
       <FormMessage message={autoSignInError ?? message?.text} type={autoSignInError ? "error" : message?.type} />
       {step === "waiting" ? <div className="grid gap-2">
-        <Button type="button" variant="outline" onClick={() => void completeRegistration()}><RefreshCw />{copy.auth.checkNow}</Button>
-        <Button type="button" variant="ghost" disabled={resendCooldown > 0} onClick={() => void resendConfirmation()}>{resendCooldown > 0 ? `${copy.auth.resendIn} ${resendCooldown} ${copy.auth.secondsShort}` : copy.auth.resend}</Button>
-        <Button type="button" variant="link" onClick={changeEmail}>{copy.auth.changeEmail}</Button>
-        {autoSignInError ? <Button asChild variant="link"><Link href="/auth/login">{copy.auth.loginManually}</Link></Button> : null}
+        <Button type="button" variant="secondary" onClick={() => void completeRegistration()}><RefreshCw />{t.auth.checkNow}</Button>
+        <Button type="button" variant="ghost" disabled={resendCooldown > 0} onClick={() => void resendConfirmation()}>{resendCooldown > 0 ? fill(t.auth.resendIn, { seconds: resendCooldown }) : t.auth.resend}</Button>
+        <Button type="button" variant="ghost" onClick={changeEmail}>{t.auth.changeEmail}</Button>
+        {autoSignInError ? <Button asChild variant="ghost"><Link href="/auth/login">{t.auth.loginManually}</Link></Button> : null}
       </div> : null}
-      <p className="text-xs leading-5 text-muted-foreground">{copy.auth.keepTabOpen}</p>
+      <p className="text-sm leading-5 text-ink-secondary">{t.auth.keepTabOpen}</p>
     </div>;
   }
 
-  return <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-    <fieldset className="grid gap-2">
-      <legend className="text-sm font-medium leading-none">{copy.auth.roleLabel}</legend>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="cursor-pointer">
-          <input type="radio" value="volunteer" {...register("role")} className="peer sr-only" />
-          <span className="flex h-full gap-3 rounded-2xl border bg-surface p-4 transition hover:border-primary/40 peer-checked:border-primary peer-checked:bg-primary/5 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><HandHeart className="size-5" /></span>
-            <span><span className="block text-sm font-black text-foreground">{copy.auth.volunteerRole}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{copy.auth.volunteerRoleDescription}</span></span>
-          </span>
-        </label>
-        <label className="cursor-pointer">
-          <input type="radio" value="coordinator" {...register("role")} className="peer sr-only" />
-          <span className="flex h-full gap-3 rounded-2xl border bg-surface p-4 transition hover:border-primary/40 peer-checked:border-primary peer-checked:bg-primary/5 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><FolderKanban className="size-5" /></span>
-            <span><span className="block text-sm font-black text-foreground">{copy.auth.coordinatorRole}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{copy.auth.coordinatorRoleDescription}</span></span>
-          </span>
-        </label>
-      </div>
-      <p className="text-xs text-danger-foreground">{translateValue(errors.role?.message ?? "", copy.auth.validation)}</p>
-    </fieldset>
-    <div className="grid gap-2"><Label htmlFor="fullName">{copy.auth.fullName}</Label><Input id="fullName" autoComplete="name" placeholder={copy.auth.fullNamePlaceholder} {...register("fullName")} /><p className="text-xs text-danger-foreground">{translateValue(errors.fullName?.message ?? "", copy.auth.validation)}</p></div>
-    <div className="grid gap-2"><Label htmlFor="phone">{copy.auth.phone}</Label><Input id="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+7 700 123 45 67" {...register("phone")} /><p className="text-xs text-danger-foreground">{translateValue(errors.phone?.message ?? "", copy.auth.validation)}</p></div>
-    <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...register("email")} /><p className="text-xs text-danger-foreground">{translateValue(errors.email?.message ?? "", copy.auth.validation)}</p></div>
-    <div className="grid gap-2"><Label htmlFor="password">{copy.auth.password}</Label><Input id="password" type="password" autoComplete="new-password" placeholder={copy.auth.passwordPlaceholder} {...register("password")} /><p className="text-xs text-danger-foreground">{translateValue(errors.password?.message ?? "", copy.auth.validation)}</p></div>
+  const fullNameError = validationText(errors.fullName?.message, t);
+  const phoneError = validationText(errors.phone?.message, t);
+  const emailError = validationText(errors.email?.message, t);
+  const passwordError = validationText(errors.password?.message, t);
+
+  return <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5" noValidate>
+    <FormField id="fullName" label={t.auth.fullName} error={fullNameError}>
+      <Input id="fullName" autoComplete="name" placeholder={t.auth.fullNamePlaceholder} {...fieldA11y("fullName", fullNameError)} {...register("fullName")} />
+    </FormField>
+    <FormField id="phone" label={t.auth.phone} error={phoneError}>
+      <Input id="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder={t.auth.phonePlaceholder} {...fieldA11y("phone", phoneError)} {...register("phone")} />
+    </FormField>
+    <FormField id="email" label={t.auth.email} error={emailError}>
+      <Input id="email" type="email" inputMode="email" autoComplete="email" placeholder={t.auth.emailPlaceholder} {...fieldA11y("email", emailError)} {...register("email")} />
+    </FormField>
+    <FormField id="password" label={t.auth.password} error={passwordError}>
+      <Input id="password" type="password" autoComplete="new-password" placeholder={t.auth.passwordPlaceholder} {...fieldA11y("password", passwordError)} {...register("password")} />
+    </FormField>
     <FormMessage message={message?.text} type={message?.type} />
-    <Button type="submit" size="lg" disabled={isSubmitting}>{isSubmitting ? <Loader2 className="animate-spin" /> : null}{copy.auth.createAccount}</Button>
+    <Button type="submit" size="lg" disabled={isSubmitting}>{isSubmitting ? <Loader2 className="animate-spin" /> : null}{t.auth.createAccount}</Button>
   </form>;
 }
