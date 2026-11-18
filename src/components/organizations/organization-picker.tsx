@@ -171,17 +171,17 @@ export function OrganizationPicker({
               <Button variant="secondary" className="mt-5" onClick={() => { setQuery(""); setCategory(null); }}>{copy.resetSearch}</Button>
             </EmptyState>
           ) : (
-            <ul className="grid gap-3">
+            <ul className="grid grid-cols-[minmax(0,1fr)] gap-3">
               {visible.map((organization) => {
                 const role = memberships[organization.id];
                 const joined = Boolean(role);
                 const isStaff = role === "coordinator" || role === "head";
                 const busy = Boolean(pending[organization.id]);
                 return (
-                  <li key={organization.id} className="flex items-center gap-3 rounded-row border border-hairline bg-surface p-3.5">
+                  <li key={organization.id} className="flex min-w-0 items-center gap-3 rounded-row border border-hairline bg-surface p-3.5">
                     <OrganizationAvatar name={organization.name} logoUrl={organization.logoUrl} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[15px] font-bold leading-5">{organization.name}</p>
+                      <p className="line-clamp-2 text-[15px] font-bold leading-5">{organization.name}</p>
                       <p className="mt-0.5 truncate text-sm text-ink-secondary">
                         {isStaff ? copy.staffRole[role] : organization.category ? translateValue(organization.category, t.common.categories) : organization.summary}
                       </p>
@@ -193,7 +193,7 @@ export function OrganizationPicker({
                       aria-pressed={joined}
                       aria-label={fill(joined ? copy.leaveLabel : copy.joinLabel, { name: organization.name })}
                       className={cn(
-                        "inline-flex h-11 min-w-[7.5rem] shrink-0 items-center justify-center gap-1.5 rounded-button px-3.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed",
+                        "inline-flex h-11 min-w-[6.5rem] shrink-0 items-center justify-center gap-1.5 rounded-button px-3.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed",
                         joined ? "bg-ink text-white hover:bg-ink/85" : "border border-control bg-surface text-ink hover:bg-page",
                         isStaff && "opacity-70",
                       )}
