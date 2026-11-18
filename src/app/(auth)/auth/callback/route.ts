@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { postSignInPath } from "@/lib/onboarding";
 import { createClient } from "@/lib/supabase/server";
 import { safeRedirect } from "@/lib/utils";
 
@@ -7,8 +8,15 @@ export async function GET(request: NextRequest) {
   const next = safeRedirect(request.nextUrl.searchParams.get("next"));
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) return NextResponse.redirect(new URL(next, request.url));
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      // Users who have not picked organizations yet go to the picker first.
+      const userId = data.user?.id;
+      const { data: profile } = userId
+        ? await supabase.from("profiles").select("onboarded_at").eq("id", userId).maybeSingle()
+        : { data: null };
+      return NextResponse.redirect(new URL(postSignInPath(profile?.onboarded_at, next), request.url));
+    }
 
     const isDifferentBrowser = error.code === "pkce_code_verifier_not_found"
       || error.code === "bad_code_verifier"

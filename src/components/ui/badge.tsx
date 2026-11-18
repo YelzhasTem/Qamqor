@@ -2,17 +2,17 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-const badgeVariants = cva("inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold", {
+const badgeVariants = cva("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold leading-4 [&_svg]:size-3.5 [&_svg]:shrink-0", {
   variants: {
     variant: {
-      default: "bg-primary text-primary-foreground",
-      secondary: "border border-secondary/30 bg-secondary/10 text-secondary-foreground",
-      outline: "border bg-surface text-foreground",
-      muted: "bg-muted text-muted-foreground",
-      info: "bg-info text-info-foreground",
-      warning: "border border-warning/30 bg-warning/15 text-warning-foreground",
-      danger: "border border-danger/30 bg-danger/10 text-danger-foreground",
-      success: "border border-success/30 bg-success/15 text-success-foreground",
+      default: "bg-ink text-white",
+      secondary: "bg-inset text-ink-muted",
+      outline: "border border-control bg-surface text-ink",
+      muted: "bg-inset text-ink-muted",
+      info: "bg-informative text-informative-foreground",
+      warning: "bg-waiting text-waiting-foreground",
+      danger: "bg-negative text-negative-foreground",
+      success: "bg-positive text-positive-foreground",
     },
   },
   defaultVariants: { variant: "default" },

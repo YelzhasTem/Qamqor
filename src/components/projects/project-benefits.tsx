@@ -9,7 +9,7 @@ import {
   Utensils,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useLanguage } from "@/components/marketing/language-provider";
+import { useLanguage } from "@/components/i18n/language-provider";
 import {
   isProjectBenefit,
   type ProjectBenefit,
@@ -34,7 +34,7 @@ export function ProjectBenefits({
   hours: number;
   className?: string;
 }) {
-  const { copy } = useLanguage();
+  const { t } = useLanguage();
   const knownBenefits = benefits.filter(isProjectBenefit);
   if (!knownBenefits.length) return null;
 
@@ -43,8 +43,8 @@ export function ProjectBenefits({
       {knownBenefits.map((benefit) => {
         const Icon = icons[benefit];
         const label = benefit === "volunteer_hours"
-          ? `${hours} ${copy.common.hoursShort}`
-          : copy.benefits[benefit];
+          ? `${hours} ${t.common.hoursShort}`
+          : t.common.benefits[benefit];
 
         return (
           <Badge key={benefit} variant="muted" className="gap-1.5 py-1.5">

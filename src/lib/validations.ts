@@ -10,7 +10,7 @@ export function normalizeKazakhstanPhone(value: string) {
 const kazakhstanPhoneSchema = z.string()
   .trim()
   .min(1, "Укажите номер телефона")
-  .max(32)
+  .max(32, "Введите номер в формате +7 700 123 45 67")
   .refine((value) => /^\+7[\d\s()-]*$/.test(value) && value.replace(/\D/g, "").length === 11, "Введите номер в формате +7 700 123 45 67");
 
 export const loginSchema = z.object({
@@ -19,15 +19,15 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z.object({
-  fullName: z.string().trim().min(2, "Укажите имя").max(120),
+  fullName: z.string().trim().min(2, "Укажите имя").max(120, "Не длиннее 120 символов"),
   phone: kazakhstanPhoneSchema,
   email: z.email("Введите корректный email"),
-  password: z.string().min(8, "Минимум 8 символов").max(72),
+  password: z.string().min(8, "Минимум 8 символов").max(72, "Не длиннее 72 символов"),
 });
 
 export const forgotPasswordSchema = z.object({ email: z.email("Введите корректный email") });
 export const passwordSchema = z.object({
-  password: z.string().min(8, "Минимум 8 символов").max(72),
+  password: z.string().min(8, "Минимум 8 символов").max(72, "Не длиннее 72 символов"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, { message: "Пароли не совпадают", path: ["confirmPassword"] });
 

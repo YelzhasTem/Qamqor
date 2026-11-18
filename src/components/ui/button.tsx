@@ -4,22 +4,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-button text-[15px] font-semibold transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-[18px] [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md",
-        secondary: "border border-secondary/30 bg-secondary/10 text-secondary-foreground hover:bg-secondary/20",
-        outline: "border bg-surface text-foreground hover:border-primary/40 hover:bg-primary/5",
-        ghost: "text-foreground hover:bg-muted",
-        destructive: "border border-danger/35 bg-danger/10 text-danger-foreground hover:bg-danger/20",
-        link: "text-primary underline-offset-4 hover:underline",
+        /** Ink background: the default primary action. */
+        default: "bg-ink text-white hover:bg-ink/85",
+        /** Brand accent: only for the single most important action on a screen. */
+        brand: "bg-brand text-brand-foreground hover:bg-brand-hover",
+        /** White with a control border. */
+        secondary: "border border-control bg-surface text-ink hover:bg-page",
+        /** Alias of secondary kept for existing screens. */
+        outline: "border border-control bg-surface text-ink hover:bg-page",
+        ghost: "text-ink hover:bg-inset",
+        destructive: "border border-negative-foreground/30 bg-negative text-negative-foreground hover:bg-negative/70",
+        link: "h-auto px-0 text-ink underline underline-offset-4 decoration-control hover:decoration-ink",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-lg px-3",
-        lg: "h-12 rounded-xl px-6 text-base",
-        icon: "size-10",
+        default: "h-11 px-4",
+        sm: "h-11 px-3.5 text-sm",
+        lg: "h-13 px-6 text-base",
+        icon: "size-11",
       },
     },
     defaultVariants: { variant: "default", size: "default" },

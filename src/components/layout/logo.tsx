@@ -1,16 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { HeartHandshake } from "lucide-react";
-import { useLanguage } from "@/components/marketing/language-provider";
+import { useLanguage } from "@/components/i18n/language-provider";
+import { brand } from "@/config/brand";
 import { cn } from "@/lib/utils";
 
-export function Logo({ compact = false, className, href = "/" }: { compact?: boolean; className?: string; href?: string }) {
-  const { copy } = useLanguage();
+/** Letter mark on the brand accent, used in the logo and the app icon. */
+export function LogoMark({ className }: { className?: string }) {
   return (
-    <Link href={href} className={cn("inline-flex items-center gap-2.5 font-black tracking-tight text-foreground", className)} aria-label={copy.nav.home}>
-      <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20"><HeartHandshake className="size-5" /></span>
-      {!compact ? <span className="text-xl">Qamqor</span> : null}
+    <span aria-hidden="true" className={cn("flex size-9 items-center justify-center rounded-[10px] bg-brand text-lg font-extrabold leading-none text-brand-foreground", className)}>
+      {brand.monogram}
+    </span>
+  );
+}
+
+export function Logo({ compact = false, className, href = "/" }: { compact?: boolean; className?: string; href?: string }) {
+  const { t } = useLanguage();
+  return (
+    <Link href={href} className={cn("inline-flex min-h-11 items-center gap-2.5 rounded-control font-extrabold tracking-tight text-ink", className)} aria-label={t.common.home}>
+      <LogoMark />
+      {!compact ? <span className="text-lg">{brand.name}</span> : null}
     </Link>
   );
 }

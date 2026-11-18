@@ -1,20 +1,20 @@
 "use client";
 
-import Link from "next/link";
-import { Logo } from "@/components/layout/logo";
-import { LanguageSwitcher } from "@/components/marketing/language-switcher";
-import { useLanguage } from "@/components/marketing/language-provider";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
+import { useLanguage } from "@/components/i18n/language-provider";
+import { brand } from "@/config/brand";
 
 export function SiteFooter() {
-  const { copy } = useLanguage();
+  const { t } = useLanguage();
   return (
-    <footer className="marketing-footer">
-      <div className="page-shell grid gap-10 py-14 md:grid-cols-[1.5fr_1fr_1fr]">
-        <div><Logo className="text-primary-foreground [&_span:first-child]:border [&_span:first-child]:border-primary-foreground/25 [&_span:first-child]:bg-surface [&_span:first-child]:text-primary" /><p className="mt-5 max-w-sm text-sm leading-7 text-primary-foreground/75">{copy.footer.description}</p><div className="mt-6 inline-flex rounded-full bg-surface/10 p-1"><LanguageSwitcher compact /></div></div>
-        <div><h3 className="font-black">{copy.footer.platform}</h3><div className="mt-5 grid gap-3 text-sm text-primary-foreground/75"><Link href="/projects">{copy.footer.projects}</Link><Link href="/auth/register">{copy.footer.volunteer}</Link></div></div>
-        <div><h3 className="font-black">Qamqor</h3><div className="mt-5 grid gap-3 text-sm text-primary-foreground/75"><a href="mailto:t.elzhas@gmail.com">t.elzhas@gmail.com</a></div></div>
+    <footer className="mt-16 border-t border-hairline bg-surface pb-[var(--safe-bottom)]">
+      <div className="page-shell flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-ink-secondary">© {new Date().getFullYear()} {brand.name}</p>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-ink-secondary">{t.marketing.footer.languages}</span>
+          <LanguageSwitcher />
+        </div>
       </div>
-      <div className="page-shell border-t border-primary-foreground/12 py-6 text-xs text-primary-foreground/65">© {new Date().getFullYear()} Qamqor. {copy.footer.rights}</div>
     </footer>
   );
 }

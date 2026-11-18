@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicVolunteerView } from "@/components/volunteers/public-volunteer-view";
 import { createClient } from "@/lib/supabase/server";
+import { brand } from "@/config/brand";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const supabase = await createClient();
   const { data } = await supabase.from("public_volunteer_profiles").select("full_name, bio").eq("id", id).maybeSingle();
-  return data ? { title: data.full_name ?? "Волонтёр", description: data.bio ?? "Публичный профиль волонтёра Qamqor" } : { title: "Волонтёр не найден" };
+  return data ? { title: data.full_name ?? "Волонтёр", description: data.bio ?? `Публичный профиль волонтёра ${brand.name}` } : { title: "Волонтёр не найден" };
 }
 
 export default async function PublicVolunteerPage({ params }: { params: Promise<{ id: string }> }) {

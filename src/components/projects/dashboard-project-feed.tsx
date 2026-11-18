@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { clampText, formatDate } from "@/lib/utils";
 import type { ProjectWithMeta } from "@/types/app";
+import { brand } from "@/config/brand";
 
 export function DashboardProjectFeed({ projects }: { projects: ProjectWithMeta[] }) {
   return (
@@ -46,7 +47,7 @@ export function DashboardProjectFeed({ projects }: { projects: ProjectWithMeta[]
 
               <div className="mt-6 flex items-center justify-between gap-4 border-t pt-5">
                 <p className="truncate text-xs text-muted-foreground">
-                  Координатор: <span className="font-bold text-foreground">{project.coordinator?.full_name ?? "Qamqor"}</span>
+                  Координатор: <span className="font-bold text-foreground">{project.coordinator?.full_name ?? brand.name}</span>
                 </p>
                 <Button asChild size="sm">
                   <Link href={`/projects/${project.id}`}>Подробнее</Link>

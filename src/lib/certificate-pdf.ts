@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import fontkit from "@pdf-lib/fontkit";
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from "pdf-lib";
+import { brand } from "@/config/brand";
 
 const certificateColors = {
   primary: pdfColor("#DC2626"),
@@ -26,8 +27,8 @@ export type CertificateData = {
 export async function generateCertificatePdf(data: CertificateData) {
   const document = await PDFDocument.create();
   document.registerFontkit(fontkit);
-  document.setTitle(`Qamqor Certificate - ${data.volunteerName}`);
-  document.setAuthor("Qamqor Volunteer Management Platform");
+  document.setTitle(`${brand.name} Certificate - ${data.volunteerName}`);
+  document.setAuthor(`${brand.name} Volunteer Management Platform`);
   document.setSubject(data.projectTitle);
   const fontBytes = await readFile(join(process.cwd(), "src/assets/fonts/NotoSans-Regular.ttf"));
   const font = await document.embedFont(fontBytes, { subset: true });
@@ -58,7 +59,7 @@ export async function generateCertificatePdf(data: CertificateData) {
   const dateText = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Almaty" }).format(new Date(data.completedAt));
   page.drawText("Дата завершения", { x: 95, y: 87, size: 8, font, color: certificateColors.muted });
   page.drawText(dateText, { x: 95, y: 67, size: 10, font, color: certificateColors.text });
-  page.drawText("Qamqor", { x: width - 186, y: 67, size: 15, font, color: certificateColors.primary });
+  page.drawText(brand.name, { x: width - 186, y: 67, size: 15, font, color: certificateColors.primary });
   page.drawLine({ start: { x: width - 205, y: 61 }, end: { x: width - 90, y: 61 }, color: certificateColors.secondary, thickness: 0.7 });
   centered(page, `ID: ${data.certificateId}`, font, 6.5, 42, certificateColors.muted);
   return document.save();
