@@ -7,7 +7,8 @@ import { OrganizationAvatar } from "@/components/organizations/organization-avat
 import { ProjectCover } from "@/components/projects/project-cover";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
-import { fill, formatLocalizedDate, translateValue } from "@/lib/i18n/format";
+import { formatDateTime } from "@/lib/datetime";
+import { fill, translateValue } from "@/lib/i18n/format";
 import type { LandingProject, Organization } from "@/lib/queries/organizations";
 import { cn } from "@/lib/utils";
 
@@ -157,7 +158,7 @@ function HeroProjectStack({ projects }: { projects: LandingProject[] }) {
 
 function HeroProjectCard({ project }: { project: LandingProject }) {
   const { locale, t } = useLanguage();
-  const date = formatLocalizedDate(project.startDate, locale, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  const date = formatDateTime(project.startDate, locale, "dayMonthShort");
   const places = project.availablePlaces > 0 ? fill(t.common.freePlaces, { count: project.availablePlaces }) : t.common.noPlaces;
 
   return (

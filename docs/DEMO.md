@@ -86,3 +86,17 @@ Dates are computed from the day you run the seed, so the demo never goes stale.
 | Животные | Фотосессия для котов из приюта | draft |
 
 Applications exist in every status (pending, approved, rejected, attended, completed) and hours in every status (pending, confirmed, rejected). Achievements and certificates are issued by the database triggers from the confirmed hours.
+
+## Trying the volunteer app
+
+Each approved application has its own check-in code; the database creates it on approval and the volunteer sees it as a QR on `/qr`. The QR encodes `http://localhost:3000/checkin/<code>` (`NEXT_PUBLIC_APP_URL` + `/checkin/` + code). The check-in page itself belongs to Part 3.
+
+Good starting points:
+
+| Account | What to look at |
+| --- | --- |
+| `volunteer10` | Feed with a "today" next-event card, an approved application, its QR, hours and a certificate. |
+| `volunteer01` | One organization; apply to «Чтение книг в доме престарелых», then approve as `coordinator.help` and watch `/qr` turn into «Вы отмечены» after «Отметить участие». |
+| `volunteer23`, `volunteer24` | Pending applications (cancel them from the project page or `/applications`); `volunteer24` belongs to three organizations, so leaving one in `/profile` shows how many applications it will cancel. |
+| `volunteer14` | «Пункт раздельного сбора на фестивале» is full: the bar shows «Мест нет». |
+| `volunteer36`–`volunteer40` | No organizations: the organization picker, then an empty «Мои организации» feed; applying to a project joins its organization. |

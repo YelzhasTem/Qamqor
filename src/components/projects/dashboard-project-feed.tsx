@@ -5,11 +5,13 @@ import { ProjectCover } from "@/components/projects/project-cover";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { clampText, formatDate } from "@/lib/utils";
+import { formatDateTime } from "@/lib/datetime";
+import type { Locale } from "@/lib/i18n/config";
+import { clampText } from "@/lib/utils";
 import type { ProjectWithMeta } from "@/types/app";
 import { brand } from "@/config/brand";
 
-export function DashboardProjectFeed({ projects }: { projects: ProjectWithMeta[] }) {
+export function DashboardProjectFeed({ projects, locale }: { projects: ProjectWithMeta[]; locale: Locale }) {
   return (
     <div className="grid gap-5">
       {projects.map((project, index) => (
@@ -37,7 +39,7 @@ export function DashboardProjectFeed({ projects }: { projects: ProjectWithMeta[]
               </p>
 
               <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-muted-foreground">
-                <span className="flex items-center gap-2"><CalendarDays className="size-4 text-primary" />{formatDate(project.start_date, "d MMMM, HH:mm")}</span>
+                <span className="flex items-center gap-2"><CalendarDays className="size-4 text-primary" />{formatDateTime(project.start_date, locale)}</span>
                 <span className="flex items-center gap-2"><MapPin className="size-4 text-primary" />{project.format === "online" ? "Онлайн" : project.city}</span>
                 {project.benefits.includes("volunteer_hours") ? <span className="flex items-center gap-2"><Clock3 className="size-4 text-primary" />{project.volunteer_hours} ВЧ</span> : null}
                 <span className="flex items-center gap-2"><Users className="size-4 text-primary" />{project.availablePlaces ?? project.required_volunteers} мест</span>

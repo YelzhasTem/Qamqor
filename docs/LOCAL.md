@@ -38,7 +38,20 @@ The first `db:start` downloads several container images and can take a few minut
 | `npm run demo:reset` | `db:reset`, then create the demo organizations, accounts, projects, applications and hours (`scripts/seed-demo.mjs`). Same result every time. |
 | `npm run types:gen` | Regenerate `src/types/database.ts` from the local database. Run it after adding a migration. |
 | `npm run test:supabase` | End-to-end smoke test of the existing RLS workflow on temporary users. |
-| `npm run test:access` | Access checks for organizations and membership (see below). |
+| `npm run test:access` | Access checks for organizations, membership, applications, check-in codes, `apply_to_project`, `leave_organization` and the volunteer feed (see below). |
+| `npm run test:time` | Proves that dates are stored in UTC and shown in Almaty time (UTC+5) whatever the machine time zone: runs under UTC, New York and Kiritimati. Needs the demo data. |
+| `npm run test:contrast` | Prints the contrast ratio of every text and background token pair the app uses together. |
+
+### Browser checks (optional)
+
+`scripts/e2e/e2e.cjs` drives the volunteer flows of Part 2 in Chromium (feed, apply, approve, QR decode, check-in, cancel, organization picker, leave, hours and certificate, coordinator and admin screens, Almaty time in three languages). `scripts/e2e/shots.cjs` writes the screenshots in `docs/screenshots/part-2`. Playwright is not a project dependency, so they need a Playwright installed elsewhere:
+
+```bash
+npm run demo:reset && npm run dev   # in another terminal
+NODE_PATH=$(npm root -g) node scripts/e2e/e2e.cjs
+```
+
+Both change demo data; run `npm run demo:reset` again afterwards.
 
 The seed and test scripts read the local URL and keys from `npx supabase status` automatically, and refuse to run when the Supabase URL is anything other than `127.0.0.1` or `localhost`.
 
@@ -53,6 +66,12 @@ prints the local **API URL** (`http://127.0.0.1:54321`), the **anon key** (also 
 ## Demo accounts
 
 `npm run demo:reset` creates a platform admin, a head and a coordinator for each of three demo organizations, and about forty volunteers. The full list and the shared demo password are in [DEMO.md](DEMO.md). Sign in at <http://localhost:3000/auth/login>.
+
+## Volunteer app
+
+Volunteers get their own shell: a tab bar on phones and a side rail on wide screens, with **Лента** (`/dashboard`), **Заявки** (`/applications`), **Мой QR** (`/qr`), **Часы** (`/hours`) and **Профиль** (`/profile`). The project page `/projects/[id]` and `/qr` are full-screen. Old links still work: `/my-projects` redirects to `/applications`, and `/cabinet` sends volunteers to `/hours`. Coordinators and admins keep their existing layout.
+
+All dates are stored in UTC and shown in Almaty time (`Asia/Almaty`, UTC+5) on every screen, in every language, whatever the device time zone. The coordinator form reads and writes Almaty time.
 
 ## Reading local e-mails
 

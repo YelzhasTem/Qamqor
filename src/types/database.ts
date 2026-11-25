@@ -155,14 +155,14 @@ isOneToOne: false
                   ]
                 },"project_applications": {
                   Row: {
-                    "applied_at": string,"id": string,"project_id": string,"status": Database["public"]['Enums']["application_status"],"updated_at": string,"volunteer_id": string
+                    "applied_at": string,"checkin_code": string | null,"id": string,"project_id": string,"status": Database["public"]['Enums']["application_status"],"updated_at": string,"volunteer_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "applied_at"?: string,"id"?: string,"project_id": string,"status"?: Database["public"]['Enums']["application_status"],"updated_at"?: string,"volunteer_id": string
+                    "applied_at"?: string,"checkin_code"?: string | null,"id"?: string,"project_id": string,"status"?: Database["public"]['Enums']["application_status"],"updated_at"?: string,"volunteer_id": string
                   }
                   Update: {
-                    "applied_at"?: string,"id"?: string,"project_id"?: string,"status"?: Database["public"]['Enums']["application_status"],"updated_at"?: string,"volunteer_id"?: string
+                    "applied_at"?: string,"checkin_code"?: string | null,"id"?: string,"project_id"?: string,"status"?: Database["public"]['Enums']["application_status"],"updated_at"?: string,"volunteer_id"?: string
                   }
                   Relationships: [
                     {
@@ -466,6 +466,22 @@ isOneToOne: false
 "admin_set_user_role":
 { Args: { "new_role": Database["public"]['Enums']["user_role"],"target_user_id": string }; Returns: Database["public"]['Enums']["user_role"]
                            },
+"apply_to_project":
+{ Args: { "target": string }; Returns: {
+              "applied_at": string,
+"checkin_code": string | null,
+"id": string,
+"project_id": string,
+"status": Database["public"]['Enums']["application_status"],
+"updated_at": string,
+"volunteer_id": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "project_applications"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "complete_onboarding":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
@@ -492,13 +508,21 @@ isOneToOne: false
         isSetofReturn: false
       } },
 "leave_organization":
-{ Args: { "target": string }; Returns: undefined
+{ Args: { "target": string }; Returns: number
+                           },
+"new_checkin_code":
+{ Args: Record<PropertyKey, never>; Returns: string
                            },
 "owns_project":
 { Args: { "target_project_id": string,"user_id"?: string }; Returns: boolean
                            },
 "project_has_capacity":
 { Args: { "target_project_id": string }; Returns: boolean
+                           },
+"volunteer_feed":
+{ Args: { "page_offset"?: number,"page_size"?: number,"scope"?: string }; Returns: {
+              "address": string,"application_id": string,"application_status": Database["public"]['Enums']["application_status"],"available_places": number,"capacity": number,"category": string,"city": string,"cover_url": string,"end_date": string,"format": Database["public"]['Enums']["project_format"],"organization_id": string,"organization_logo_url": string,"organization_name": string,"project_id": string,"start_date": string,"title": string
+            }[]
                            }
           }
           Enums: {

@@ -30,6 +30,7 @@ import {
   projectBenefitLabels,
   type ProjectBenefit,
 } from "@/lib/project-benefits";
+import { isoToAlmatyInput } from "@/lib/datetime";
 import { cn } from "@/lib/utils";
 import { projectCities, projectSchema } from "@/lib/validations";
 import type { Project } from "@/types/app";
@@ -57,9 +58,6 @@ const benefitOptions = [
   { value: "recommendation_letter", icon: FileBadge2 },
 ] satisfies { value: ProjectBenefit; icon: typeof Clock3 }[];
 
-const toLocalDate = (value?: string) => value
-  ? new Date(new Date(value).getTime() - new Date(value).getTimezoneOffset() * 60000).toISOString().slice(0, 16)
-  : "";
 
 function toProjectCity(value?: string | null) {
   const normalized = value?.trim().toLocaleLowerCase("ru-RU");
@@ -89,8 +87,8 @@ export function ProjectForm({ project, whatsappGroupUrl = "" }: { project?: Proj
       city: toProjectCity(project?.city),
       address: project?.address ?? "",
       format: project?.format ?? "offline",
-      start_date: toLocalDate(project?.start_date),
-      end_date: toLocalDate(project?.end_date),
+      start_date: isoToAlmatyInput(project?.start_date),
+      end_date: isoToAlmatyInput(project?.end_date),
       volunteer_hours: project?.volunteer_hours ?? 4,
       required_volunteers: project?.required_volunteers ?? 10,
       benefits: existingBenefits,
@@ -194,10 +192,10 @@ export function ProjectForm({ project, whatsappGroupUrl = "" }: { project?: Proj
           <Field label="Место проведения" error={errors.address?.message}>
             <Input {...register("address")} disabled={format === "online"} placeholder={format === "online" ? "Не требуется" : "Улица, дом, место встречи"} />
           </Field>
-          <Field label="Дата и время начала" error={errors.start_date?.message}>
+          <Field label="Дата и время начала (время Алматы)" error={errors.start_date?.message}>
             <Input type="datetime-local" {...register("start_date")} />
           </Field>
-          <Field label="Дата и время окончания" error={errors.end_date?.message}>
+          <Field label="Дата и время окончания (время Алматы)" error={errors.end_date?.message}>
             <Input type="datetime-local" {...register("end_date")} />
           </Field>
         </div>

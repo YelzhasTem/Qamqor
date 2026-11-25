@@ -15,7 +15,9 @@
     "demo:reset": "npm run db:reset && node scripts/seed-demo.mjs",
     "demo:seed": "node scripts/seed-demo.mjs",
     "types:gen": "npx supabase gen types typescript --local > src/types/database.ts",
-    "test:access": "node scripts/smoke-organizations.mjs"
+    "test:access": "node scripts/smoke-organizations.mjs",
+    "test:time": "node scripts/check-almaty-time.mjs",
+    "test:contrast": "node scripts/check-contrast.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -31,10 +33,10 @@
     "@supabase/supabase-js": "^2.110.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "date-fns": "^4.4.0",
     "lucide-react": "^1.25.0",
     "next": "15.5.20",
     "pdf-lib": "^1.17.1",
+    "qrcode-generator": "^2.0.4",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-hook-form": "^7.81.0",
@@ -51,6 +53,7 @@
     "@types/react-dom": "^19.2.2",
     "eslint": "^9.39.1",
     "eslint-config-next": "15.5.20",
+    "jsqr": "^1.4.0",
     "supabase": "^3.2.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3"

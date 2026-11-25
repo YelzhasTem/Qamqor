@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { almatyInputToIso } from "@/lib/datetime";
 import { projectSchema } from "@/lib/validations";
 import type { ActionResult } from "@/lib/actions/profile";
 
@@ -48,14 +49,18 @@ export async function createProjectAction(formData: FormData): Promise<ActionRes
 
   const supabase = await createClient();
   const { whatsapp_group_url: whatsappGroupUrl, status: requestedStatus, ...projectValues } = parsed.data;
+  // The form sends Almaty wall-clock time; store the real instant.
+  const startDate = almatyInputToIso(projectValues.start_date);
+  const endDate = almatyInputToIso(projectValues.end_date);
+  if (!startDate || !endDate) return { success: false, error: "Проверьте дату и время" };
   const { data, error } = await supabase.from("projects").insert({
     ...projectValues,
     address: projectValues.address || null,
     requirements: projectValues.requirements || null,
     cover_url: coverUrl,
     coordinator_id: profile.id,
-    start_date: new Date(projectValues.start_date).toISOString(),
-    end_date: new Date(projectValues.end_date).toISOString(),
+    start_date: startDate,
+    end_date: endDate,
     status: "draft",
   }).select("id").single();
 
@@ -102,6 +107,10 @@ export async function saveProjectAction(projectId: string, formData: FormData): 
   }
 
   const { whatsapp_group_url: whatsappGroupUrl, ...projectValues } = parsed.data;
+  // The form sends Almaty wall-clock time; store the real instant.
+  const startDate = almatyInputToIso(projectValues.start_date);
+  const endDate = almatyInputToIso(projectValues.end_date);
+  if (!startDate || !endDate) return { success: false, error: "Проверьте дату и время" };
   const { error: groupError } = await supabase.from("project_whatsapp_groups").upsert({
     project_id: projectId,
     whatsapp_group_url: whatsappGroupUrl,
@@ -114,8 +123,8 @@ export async function saveProjectAction(projectId: string, formData: FormData): 
     requirements: projectValues.requirements || null,
     cover_url: coverUrl,
     coordinator_id: profile.id,
-    start_date: new Date(projectValues.start_date).toISOString(),
-    end_date: new Date(projectValues.end_date).toISOString(),
+    start_date: startDate,
+    end_date: endDate,
   };
   const { data, error } = await supabase.from("projects").update(payload).eq("id", projectId).eq("coordinator_id", profile.id).select("id").single();
   if (error) return { success: false, error: error.message };

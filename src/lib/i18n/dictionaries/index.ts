@@ -5,6 +5,7 @@ import { common } from "@/lib/i18n/dictionaries/common";
 import { marketing } from "@/lib/i18n/dictionaries/marketing";
 import { organizations } from "@/lib/i18n/dictionaries/organizations";
 import { statuses } from "@/lib/i18n/dictionaries/statuses";
+import { volunteer } from "@/lib/i18n/dictionaries/volunteer";
 
 function build(locale: Locale) {
   return withBrand({
@@ -13,6 +14,7 @@ function build(locale: Locale) {
     marketing: marketing[locale],
     auth: auth[locale],
     organizations: organizations[locale],
+    volunteer: volunteer[locale],
   });
 }
 

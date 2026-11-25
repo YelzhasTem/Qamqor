@@ -6,7 +6,8 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatLocalizedDate, translateValue } from "@/lib/i18n/format";
+import { formatDate } from "@/lib/datetime";
+import { translateValue } from "@/lib/i18n/format";
 import { initials } from "@/lib/utils";
 import type { Achievement, PublicVolunteerProfile } from "@/types/app";
 import type { Database } from "@/types/database";
@@ -42,7 +43,7 @@ export function PublicVolunteerView({ profile, projects, awarded }: { profile: P
                 <Card key={project.project_id}>
                   <CardContent className="flex items-center gap-4 p-5">
                     <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-success/15 text-success-foreground"><CalendarCheck2 /></div>
-                    <div className="min-w-0 flex-1"><p className="truncate font-black">{project.title}</p><p className="mt-1 text-xs text-muted-foreground">{translateValue(project.city ?? "", t.common.cities)} · {formatLocalizedDate(project.end_date!, locale, { day: "numeric", month: "long", year: "numeric" })}</p></div>
+                    <div className="min-w-0 flex-1"><p className="truncate font-black">{project.title}</p><p className="mt-1 text-xs text-muted-foreground">{translateValue(project.city ?? "", t.common.cities)} · {formatDate(project.end_date!, locale, "full")}</p></div>
                     <div className="text-right"><p className="font-black text-success-foreground">{project.hours} {t.common.hoursShort}</p><p className="text-xs text-muted-foreground">{t.marketing.volunteerProfile.confirmed}</p></div>
                   </CardContent>
                 </Card>

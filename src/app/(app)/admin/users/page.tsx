@@ -11,12 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, initials } from "@/lib/utils";
+import { formatDate } from "@/lib/datetime";
+import { getLocale } from "@/lib/i18n/server";
+import { initials } from "@/lib/utils";
 import { isCoordinatorRole } from "@/types/roles";
 
 export const metadata: Metadata = { title: "Управление пользователями" };
 
 export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const locale = await getLocale();
   await requireRole("admin");
   const { q } = await searchParams;
   const query = q?.trim().slice(0, 100) ?? "";
@@ -58,7 +61,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
           <TableBody>{filteredUsers.map((user) => <TableRow key={user.id}>
             <TableCell><div className="flex items-center gap-3"><Avatar className="size-10"><AvatarImage src={user.avatar_url ?? undefined} /><AvatarFallback>{initials(user.full_name)}</AvatarFallback></Avatar><div className="min-w-0"><p className="truncate font-bold">{user.full_name}</p><p className="mt-0.5 truncate text-xs text-muted-foreground">{user.email}</p></div></div></TableCell>
             <TableCell><RoleBadges role={user.role} /></TableCell>
-            <TableCell className="whitespace-nowrap text-muted-foreground">{formatDate(user.created_at, "d MMM yyyy")}</TableCell>
+            <TableCell className="whitespace-nowrap text-muted-foreground">{formatDate(user.created_at, locale, "fullShort")}</TableCell>
             <TableCell className="text-right"><UserRoleManager userId={user.id} fullName={user.full_name} role={user.role} /></TableCell>
           </TableRow>)}</TableBody>
         </Table>
