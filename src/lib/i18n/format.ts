@@ -72,6 +72,15 @@ export function translateValue(value: string, translations: Readonly<Record<stri
   return translations[value] ?? value;
 }
 
+export type PluralForms = { readonly one: string; readonly few: string; readonly many: string; readonly other: string };
+
+/** Picks the plural form for `count` (Intl.PluralRules) and fills {count} and other placeholders. */
+export function plural(locale: Locale, count: number, forms: PluralForms, values: Record<string, string | number> = {}) {
+  const category = new Intl.PluralRules(localeTags[locale]).select(count);
+  const template = category in forms ? forms[category as keyof PluralForms] : forms.other;
+  return fill(template, { count, ...values });
+}
+
 /** Replaces {name} placeholders. `{brand}` is filled in when dictionaries load. */
 export function fill(template: string, values: Record<string, string | number>) {
   return template.replace(/\{(\w+)\}/g, (match, key: string) => (key in values ? String(values[key]) : match));

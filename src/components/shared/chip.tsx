@@ -18,3 +18,12 @@ export function Chip({ pressed = false, className, children, ...props }: React.B
     </button>
   );
 }
+
+/** Non-interactive chip for labels inside cards and links (category, benefits). */
+export function ChipLabel({ className, children }: { className?: string; children: React.ReactNode }) {
+  return (
+    <span className={cn("inline-flex min-h-7 shrink-0 items-center gap-1.5 rounded-full border border-control bg-surface px-3 text-[13px] font-semibold leading-4 text-ink", className)}>
+      {children}
+    </span>
+  );
+}
