@@ -16,7 +16,7 @@ import {
 } from "@/lib/project-benefits";
 import { cn } from "@/lib/utils";
 
-const icons = {
+export const benefitIcons = {
   thank_you_letter: HandHeart,
   volunteer_hours: Clock3,
   meals: Utensils,
@@ -41,7 +41,7 @@ export function ProjectBenefits({
   return (
     <div className={cn("flex flex-wrap gap-2", className)}>
       {knownBenefits.map((benefit) => {
-        const Icon = icons[benefit];
+        const Icon = benefitIcons[benefit];
         const label = benefit === "volunteer_hours"
           ? `${hours} ${t.common.hoursShort}`
           : t.common.benefits[benefit];
