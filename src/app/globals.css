@@ -104,6 +104,10 @@
   --informative: #dbeafe;
   --informative-foreground: #1e40af;
 
+  /* Check-in QR codes are always pure black on white, never tinted by the accent. */
+  --qr-dark: #000000;
+  --qr-light: #ffffff;
+
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
 
