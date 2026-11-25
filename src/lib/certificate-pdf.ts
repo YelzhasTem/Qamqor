@@ -3,6 +3,7 @@ import { join } from "node:path";
 import fontkit from "@pdf-lib/fontkit";
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import { brand } from "@/config/brand";
+import { formatDate } from "@/lib/datetime";
 
 const certificateColors = {
   primary: pdfColor("#DC2626"),
@@ -56,7 +57,8 @@ export async function generateCertificatePdf(data: CertificateData) {
   const contributionY = height - 420;
   centered(page, `и внёс(ла) вклад в объёме ${formatHours(data.hours)} волонтёрских часов`, font, 11.5, contributionY, certificateColors.text);
 
-  const dateText = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Almaty" }).format(new Date(data.completedAt));
+  // Almaty calendar date, through the same helper as every screen.
+  const dateText = formatDate(data.completedAt, "ru", "full");
   page.drawText("Дата завершения", { x: 95, y: 87, size: 8, font, color: certificateColors.muted });
   page.drawText(dateText, { x: 95, y: 67, size: 10, font, color: certificateColors.text });
   page.drawText(brand.name, { x: width - 186, y: 67, size: 15, font, color: certificateColors.primary });

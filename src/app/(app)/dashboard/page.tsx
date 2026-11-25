@@ -5,6 +5,7 @@ import { DashboardProjectFeed } from "@/components/projects/dashboard-project-fe
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { getCurrentProfile } from "@/lib/auth";
+import { getLocale } from "@/lib/i18n/server";
 import { getDashboardProjects } from "@/lib/queries/projects";
 import { isCoordinatorRole } from "@/types/roles";
 import { brand } from "@/config/brand";
@@ -12,7 +13,7 @@ import { brand } from "@/config/brand";
 export const metadata: Metadata = { title: "Актуальные проекты" };
 
 export default async function DashboardPage() {
-  const [profile, projects] = await Promise.all([getCurrentProfile(), getDashboardProjects()]);
+  const [profile, projects, locale] = await Promise.all([getCurrentProfile(), getDashboardProjects(), getLocale()]);
   const canCreate = profile ? isCoordinatorRole(profile.role) : false;
 
   return (
@@ -34,7 +35,7 @@ export default async function DashboardPage() {
 
       <div className="mt-7">
         {projects.length ? (
-          <DashboardProjectFeed projects={projects} />
+          <DashboardProjectFeed projects={projects} locale={locale} />
         ) : (
           <EmptyState
             icon={FolderKanban}

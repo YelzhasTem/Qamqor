@@ -15,7 +15,8 @@
     "demo:reset": "npm run db:reset && node scripts/seed-demo.mjs",
     "demo:seed": "node scripts/seed-demo.mjs",
     "types:gen": "npx supabase gen types typescript --local > src/types/database.ts",
-    "test:access": "node scripts/smoke-organizations.mjs"
+    "test:access": "node scripts/smoke-organizations.mjs",
+    "test:time": "node scripts/check-almaty-time.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -31,7 +32,6 @@
     "@supabase/supabase-js": "^2.110.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "date-fns": "^4.4.0",
     "lucide-react": "^1.25.0",
     "next": "15.5.20",
     "pdf-lib": "^1.17.1",
