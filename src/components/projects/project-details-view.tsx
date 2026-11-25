@@ -235,7 +235,7 @@ function ApplyBar({
   } else if (!project.open) {
     content = <p className="flex min-h-13 items-center justify-center rounded-button bg-inset px-4 text-[15px] font-semibold text-ink-muted">{copy.closed}</p>;
   } else if (project.availablePlaces <= 0) {
-    content = <Button size="lg" className="w-full" disabled>{copy.noPlaces}</Button>;
+    content = <p className="flex min-h-13 items-center justify-center rounded-button bg-inset px-4 text-[15px] font-semibold text-ink-muted">{copy.noPlaces}</p>;
   } else {
     content = (
       <div>

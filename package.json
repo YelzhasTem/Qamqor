@@ -16,7 +16,8 @@
     "demo:seed": "node scripts/seed-demo.mjs",
     "types:gen": "npx supabase gen types typescript --local > src/types/database.ts",
     "test:access": "node scripts/smoke-organizations.mjs",
-    "test:time": "node scripts/check-almaty-time.mjs"
+    "test:time": "node scripts/check-almaty-time.mjs",
+    "test:contrast": "node scripts/check-contrast.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
